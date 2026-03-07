@@ -1,20 +1,20 @@
 export const DPI_OPTIONS = [150, 300, 450] as const;
 export const DEFAULT_DPI = 300;
-export const DEFAULT_PAGE_INPUT = "1";
+export const DEFAULT_PAGE_INPUT = "";
 export const MAX_SELECTED_PAGES = 6;
 export const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
 export type SupportedDpi = (typeof DPI_OPTIONS)[number];
 
 type ParsedPageSelection =
-  | { ok: true; pages: number[] }
+  | { ok: true; pages?: number[] }
   | { ok: false; message: string };
 
 export function parsePageSelection(input: string): ParsedPageSelection {
   const raw = input.trim();
 
   if (raw.length === 0) {
-    return { ok: true, pages: [0] };
+    return { ok: true };
   }
 
   const parts = raw
@@ -23,7 +23,7 @@ export function parsePageSelection(input: string): ParsedPageSelection {
     .filter(Boolean);
 
   if (parts.length === 0) {
-    return { ok: true, pages: [0] };
+    return { ok: true };
   }
 
   const pages: number[] = [];
