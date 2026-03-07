@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "../../packages/ui/src/styles/globals.css",
+    "css": "app/globals.css",
     "baseColor": "neutral",
     "cssVariables": true
   },
@@ -14,7 +14,7 @@
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@omsimos/ui/lib/utils",
-    "ui": "@omsimos/ui/components"
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui"
   }
 }
