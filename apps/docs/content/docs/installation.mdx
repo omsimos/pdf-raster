@@ -1,0 +1,40 @@
+---
+title: Installation
+description: Add the package and understand the native runtime requirements.
+---
+
+Install the package with Bun or npm:
+
+```bash
+bun add @omsimos/pdf-to-images
+```
+
+```bash
+npm install @omsimos/pdf-to-images
+```
+
+## Runtime model
+
+This package is a native server-side library.
+
+- supported runtimes: Node.js and Bun
+- primary job: render PDF pages into PNG images
+- primary use case: feed OCR or multimodal pipelines
+
+Use it in server environments, route handlers, workers, or backend jobs. Do not import it into browser bundles.
+
+## Local development
+
+In this monorepo, PDFium is cached locally before native builds:
+
+```bash
+bun run pdfium:download
+```
+
+Then build the package:
+
+```bash
+bun run --filter @omsimos/pdf-to-images build
+```
+
+Continue with [Quickstart](./quickstart).

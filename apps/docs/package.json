@@ -1,27 +1,35 @@
 {
   "name": "docs",
-  "version": "0.1.0",
-  "type": "module",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3001",
+    "check-types": "fumadocs-mdx && next typegen && tsc --noEmit",
     "build": "next build",
-    "clean": "node ../../scripts/clean.mjs .next .turbo",
-    "start": "next start",
-    "check-types": "tsc --noEmit",
-    "ui:add": "bunx --bun shadcn@latest add"
+    "clean": "node ../../scripts/clean.mjs .next .turbo .source",
+    "dev": "next dev --port 3001",
+    "start": "next start --port 3001",
+    "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
-    "@omsimos/ui": "*",
-    "next": "16.1.5",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "@takumi-rs/image-response": "^0.70.4",
+    "fumadocs-core": "16.6.10",
+    "fumadocs-mdx": "14.2.9",
+    "fumadocs-ui": "16.6.10",
+    "lucide-react": "^0.577.0",
+    "next": "16.1.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@repo/typescript-config": "*",
-    "@types/node": "^22.15.3",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2",
-    "typescript": "5.9.2"
+    "@tailwindcss/postcss": "^4.2.1",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "^25.3.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3"
   }
 }

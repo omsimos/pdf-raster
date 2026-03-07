@@ -1,0 +1,75 @@
+---
+title: API reference
+description: Inputs, options, outputs, and error behavior for convert().
+---
+
+## `convert(input, options?)`
+
+```ts
+function convert(
+  input: string | Buffer | Uint8Array | ArrayBuffer,
+  options?: ConvertOptions,
+): Promise<ConvertedPage[]>;
+```
+
+## Input
+
+Accepted `input` values:
+
+- file path as `string`
+- `Buffer`
+- `Uint8Array`
+- `ArrayBuffer`
+
+## Options
+
+```ts
+type ConvertOptions = {
+  pages?: number[];
+  dpi?: number;
+  outputFormat?: "png";
+  password?: string;
+  crop?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  renderAnnotations?: boolean;
+};
+```
+
+Notes:
+
+- `pages` is zero-based
+- omitting `pages` converts the full document
+- `outputFormat` is currently PNG only
+- `dpi` defaults to `300`
+
+## Output
+
+```ts
+type ConvertedPage = {
+  pageIndex: number;
+  data: Buffer;
+  mimeType: "image/png";
+  width: number;
+  height: number;
+  dpi: number;
+};
+```
+
+## Errors
+
+The package throws `PdfToImagesError` with a stable `code`.
+
+Current error codes:
+
+- `INVALID_INPUT`
+- `INVALID_OPTIONS`
+- `INVALID_PAGE_INDEX`
+- `INVALID_CROP`
+- `PASSWORD_ERROR`
+- `MALFORMED_PDF`
+- `PDFIUM_UNAVAILABLE`
+- `RENDER_ERROR`

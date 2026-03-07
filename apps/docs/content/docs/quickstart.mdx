@@ -1,0 +1,51 @@
+---
+title: Quickstart
+description: Convert a PDF into PNG pages with the single public API.
+---
+
+Import `convert()` and pass either a file path or PDF bytes.
+
+## Convert all pages
+
+```ts
+import { convert } from "@omsimos/pdf-to-images";
+
+const pages = await convert("./report.pdf");
+
+for (const page of pages) {
+  console.log({
+    pageIndex: page.pageIndex,
+    width: page.width,
+    height: page.height,
+    dpi: page.dpi,
+    mimeType: page.mimeType,
+  });
+}
+```
+
+## Convert selected pages
+
+Page indices are zero-based:
+
+```ts
+import { convert } from "@omsimos/pdf-to-images";
+
+const pages = await convert("./report.pdf", {
+  pages: [0, 2],
+  dpi: 300,
+});
+```
+
+## Convert from an in-memory buffer
+
+```ts
+import { readFile } from "node:fs/promises";
+import { convert } from "@omsimos/pdf-to-images";
+
+const bytes = await readFile("./invoice.pdf");
+const pages = await convert(bytes, {
+  dpi: 300,
+});
+```
+
+Next: [API reference](./api-reference).

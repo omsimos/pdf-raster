@@ -1,0 +1,41 @@
+---
+title: Introduction
+description: What @omsimos/pdf-to-images does and where it fits in an OCR or VLM pipeline.
+---
+
+`@omsimos/pdf-to-images` is a server-side library for converting PDFs into PNG page images quickly.
+
+It is intentionally narrow:
+
+- native PDF rendering through Rust, `napi-rs`, and PDFium
+- one public API centered on `convert()`
+- PNG output that can be passed into OCR engines or multimodal models
+
+It does **not** perform OCR itself. The intended pipeline is:
+
+```txt
+PDF -> @omsimos/pdf-to-images -> PNG pages -> OCR / VLM / review tooling
+```
+
+## Why this library exists
+
+Most OCR and VLM workflows do not want raw PDF bytes. They want page images that are:
+
+- lossless
+- high enough resolution for text extraction
+- simple to pass into downstream systems
+
+This package keeps that primitive focused and fast.
+
+## What you get back
+
+Each converted page includes:
+
+- `pageIndex`
+- `data` as a PNG `Buffer`
+- `mimeType`
+- `width`
+- `height`
+- `dpi`
+
+Continue with [Installation](./installation).
