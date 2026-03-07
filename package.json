@@ -8,7 +8,8 @@
     "format-and-lint": "biome check .",
     "format-and-lint:fix": "biome check . --write",
     "check-types": "turbo run check-types",
-    "pdfium:download": "bun run --filter @omsimos/pdf-to-images pdfium:download"
+    "pdfium:download": "bun run --filter @omsimos/pdf-to-images pdfium:download",
+    "test": "turbo run test"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",

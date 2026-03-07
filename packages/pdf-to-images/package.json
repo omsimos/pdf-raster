@@ -49,6 +49,9 @@
     "clean": "node ../../scripts/clean.mjs .turbo dist target '*.node' '*.so' '*.dylib' '*.dll'",
     "check-types": "tsc --noEmit",
     "pdfium:download": "node ../../scripts/prefetch-pdfium.mjs",
+    "test": "bun run build && bun run test:bun && bun run test:node",
+    "test:bun": "bun test ./test",
+    "test:node": "node ./test/node-smoke.mjs",
     "prepublishOnly": "bun run build && napi prepublish -t npm"
   },
   "keywords": [

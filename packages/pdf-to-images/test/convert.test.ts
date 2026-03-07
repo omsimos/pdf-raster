@@ -1,0 +1,136 @@
+import { describe, expect, test } from "bun:test";
+import { readFile } from "node:fs/promises";
+import type { ConvertedPage, PdfToImagesErrorCode } from "../dist/index";
+import { convert, PdfToImagesError } from "../dist/index";
+import { fixturePath, parsePngDimensions } from "./helpers";
+
+const singlePageFixture = fixturePath("single-page.pdf");
+const multiPageFixture = fixturePath("multi-page.pdf");
+const malformedFixture = fixturePath("malformed.pdf");
+
+async function expectPdfError(
+  promise: Promise<unknown>,
+  code: PdfToImagesErrorCode,
+) {
+  try {
+    await promise;
+    throw new Error(`Expected PdfToImagesError(${code}) to be thrown.`);
+  } catch (error) {
+    expect(error).toBeInstanceOf(PdfToImagesError);
+    expect((error as PdfToImagesError).code).toBe(code);
+  }
+}
+
+function expectPageShape(page: ConvertedPage, pageIndex: number, dpi: number) {
+  expect(page.pageIndex).toBe(pageIndex);
+  expect(page.dpi).toBe(dpi);
+  expect(page.mimeType).toBe("image/png");
+  expect(page.data.byteLength).toBeGreaterThan(8);
+
+  const dimensions = parsePngDimensions(page.data);
+  expect(dimensions.width).toBe(page.width);
+  expect(dimensions.height).toBe(page.height);
+}
+
+describe("@omsimos/pdf-to-images", () => {
+  test("converts all pages by default from an in-memory buffer", async () => {
+    const bytes = await readFile(multiPageFixture);
+    const pages = await convert(bytes);
+
+    expect(pages).toHaveLength(2);
+    expectPageShape(pages[0], 0, 300);
+    expectPageShape(pages[1], 1, 300);
+    expect(pages[0].width).toBe(833);
+    expect(pages[0].height).toBe(417);
+  });
+
+  test("converts selected pages from a file path", async () => {
+    const pages = await convert(multiPageFixture, {
+      pages: [1],
+      dpi: 150,
+    });
+
+    expect(pages).toHaveLength(1);
+    expectPageShape(pages[0], 1, 150);
+    expect(pages[0].width).toBe(417);
+    expect(pages[0].height).toBe(209);
+  });
+
+  test("returns PNG buffers with metadata for a single-page PDF", async () => {
+    const pages = await convert(singlePageFixture, {
+      pages: [0],
+      dpi: 300,
+    });
+
+    expect(pages).toHaveLength(1);
+    expectPageShape(pages[0], 0, 300);
+  });
+
+  test("supports crop output when the crop is within bounds", async () => {
+    const pages = await convert(singlePageFixture, {
+      crop: {
+        x: 10,
+        y: 20,
+        width: 100,
+        height: 200,
+      },
+    });
+
+    expect(pages).toHaveLength(1);
+    expectPageShape(pages[0], 0, 300);
+    expect(pages[0].width).toBe(100);
+    expect(pages[0].height).toBe(200);
+  });
+
+  test("rejects invalid dpi values", async () => {
+    await expectPdfError(
+      convert(singlePageFixture, {
+        dpi: 0,
+      }),
+      "INVALID_OPTIONS",
+    );
+  });
+
+  test("rejects out-of-range page indices", async () => {
+    await expectPdfError(
+      convert(singlePageFixture, {
+        pages: [9],
+      }),
+      "INVALID_PAGE_INDEX",
+    );
+  });
+
+  test("rejects negative crop values before calling native code", async () => {
+    await expectPdfError(
+      convert(singlePageFixture, {
+        crop: {
+          x: -1,
+          y: 0,
+          width: 10,
+          height: 10,
+        },
+      }),
+      "INVALID_CROP",
+    );
+  });
+
+  test("rejects crop rectangles that exceed the rendered page bounds", async () => {
+    await expectPdfError(
+      convert(singlePageFixture, {
+        crop: {
+          x: 800,
+          y: 0,
+          width: 100,
+          height: 50,
+        },
+      }),
+      "INVALID_CROP",
+    );
+  });
+
+  test("surfaces malformed pdf input cleanly", async () => {
+    const malformedBytes = await readFile(malformedFixture);
+
+    await expectPdfError(convert(malformedBytes), "MALFORMED_PDF");
+  });
+});
