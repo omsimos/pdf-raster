@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev --port 3000",
     "build": "next build",
-    "clean": "node ../../scripts/clean.mjs .next .turbo",
+    "clean": "node ../scripts/clean.mjs .next .turbo",
     "start": "next start",
     "check-types": "tsc --noEmit",
     "ui:add": "bunx --bun shadcn@latest add"
@@ -25,7 +25,6 @@
     "tw-animate-css": "^1.3.8"
   },
   "devDependencies": {
-    "@repo/typescript-config": "*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",

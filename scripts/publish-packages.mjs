@@ -4,7 +4,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
-const packageDir = resolve(repoRoot, "packages", "pdf-to-images");
+const packageDir = resolve(repoRoot, "core");
 const npmDir = resolve(packageDir, "npm");
 
 function run(command, args, cwd) {

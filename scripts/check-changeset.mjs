@@ -42,10 +42,10 @@ const changedFiles = (
   .filter(Boolean);
 
 const packageAffectingPrefixes = [
-  "packages/pdf-to-images/src/",
-  "packages/pdf-to-images/Cargo.toml",
-  "packages/pdf-to-images/package.json",
-  "packages/pdf-to-images/build.rs",
+  "core/src/",
+  "core/Cargo.toml",
+  "core/package.json",
+  "core/build.rs",
   "scripts/pdfium.mjs",
   "scripts/bundle-pdfium.mjs",
   "scripts/publish-packages.mjs",

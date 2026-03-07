@@ -76,14 +76,14 @@ jobs:
         shell: bash
         run: |
           bunx --bun @napi-rs/cli build \
-            --cwd packages/pdf-to-images \
+            --cwd core \
             --platform \
             --release \
             --output-dir artifacts/${{ matrix.platform_arch_abi }} \
             ${{ matrix.build_flags }}
 
       - name: Stage PDFium library
-        run: node scripts/stage-pdfium-artifact.mjs packages/pdf-to-images/artifacts/${{ matrix.platform_arch_abi }}
+        run: node scripts/stage-pdfium-artifact.mjs core/artifacts/${{ matrix.platform_arch_abi }}
         env:
           PDFIUM_TARGET: ${{ matrix.target }}
 
@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: native-${{ matrix.platform_arch_abi }}
-          path: packages/pdf-to-images/artifacts/${{ matrix.platform_arch_abi }}
+          path: core/artifacts/${{ matrix.platform_arch_abi }}
           if-no-files-found: error
 
   release:
@@ -125,7 +125,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: native-*
-          path: packages/pdf-to-images/artifacts
+          path: core/artifacts
 
       - name: Release
         uses: changesets/action@v1

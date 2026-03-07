@@ -104,18 +104,18 @@ Edge runtimes.
 
 ## Examples
 
-- Basic server-side usage: see [`apps/docs/content/docs/quickstart.mdx`](./apps/docs/content/docs/quickstart.mdx)
-- Node.js examples: see [`apps/docs/content/docs/examples-node.mdx`](./apps/docs/content/docs/examples-node.mdx)
-- Next.js route handler example: see [`apps/docs/content/docs/examples-nextjs.mdx`](./apps/docs/content/docs/examples-nextjs.mdx)
-- OCR / VLM handoff examples: see [`apps/docs/content/docs/examples-ocr-vlm.mdx`](./apps/docs/content/docs/examples-ocr-vlm.mdx)
+- Basic server-side usage: see [`docs/content/docs/quickstart.mdx`](./docs/content/docs/quickstart.mdx)
+- Node.js examples: see [`docs/content/docs/examples-node.mdx`](./docs/content/docs/examples-node.mdx)
+- Next.js route handler example: see [`docs/content/docs/examples-nextjs.mdx`](./docs/content/docs/examples-nextjs.mdx)
+- OCR / VLM handoff examples: see [`docs/content/docs/examples-ocr-vlm.mdx`](./docs/content/docs/examples-ocr-vlm.mdx)
 
-If you want the full documentation set, see [`apps/docs`](./apps/docs) in this
+If you want the full documentation set, see [`docs`](./docs) in this
 repository.
 
 The repo also includes:
 
-- [`apps/example`](./apps/example): interactive demo app using `@omsimos/pdf-to-images`
-- [`apps/docs`](./apps/docs): Fumadocs-based documentation app
+- [`example`](./example): interactive demo app using `@omsimos/pdf-to-images`
+- [`docs`](./docs): Fumadocs-based documentation app
 
 ## Local development
 

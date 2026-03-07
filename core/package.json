@@ -52,11 +52,11 @@
     "build:native:debug": "napi build --platform",
     "create-npm-dirs": "napi create-npm-dirs --npm-dir npm",
     "collect-npm-artifacts": "napi artifacts --output-dir artifacts --npm-dir npm",
-    "prepare-npm-packages": "bun run create-npm-dirs && bun run collect-npm-artifacts && node ../../scripts/copy-pdfium-to-npm.mjs && napi prepublish --npm-dir npm --gh-release=false --skip-optional-publish",
-    "bundle:pdfium": "node ../../scripts/bundle-pdfium.mjs",
-    "clean": "node ../../scripts/clean.mjs .turbo artifacts dist npm target '*.node' '*.so' '*.dylib' '*.dll'",
+    "prepare-npm-packages": "bun run create-npm-dirs && bun run collect-npm-artifacts && node ../scripts/copy-pdfium-to-npm.mjs && napi prepublish --npm-dir npm --gh-release=false --skip-optional-publish",
+    "bundle:pdfium": "node ../scripts/bundle-pdfium.mjs",
+    "clean": "node ../scripts/clean.mjs .turbo artifacts dist npm target '*.node' '*.so' '*.dylib' '*.dll'",
     "check-types": "tsc --noEmit",
-    "pdfium:download": "node ../../scripts/prefetch-pdfium.mjs",
+    "pdfium:download": "node ../scripts/prefetch-pdfium.mjs",
     "test": "bun run build && bun run test:bun && bun run test:node",
     "test:bun": "bun test ./test",
     "test:node": "node ./test/node-smoke.mjs",
@@ -75,7 +75,6 @@
   ],
   "devDependencies": {
     "@napi-rs/cli": "^3.4.0",
-    "@repo/typescript-config": "*",
     "@types/node": "^22.15.3",
     "typescript": "5.9.2"
   }

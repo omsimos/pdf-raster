@@ -10,7 +10,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
-const packageDir = resolve(repoRoot, "packages", "pdf-to-images");
+const packageDir = resolve(repoRoot, "core");
 const artifactsDir = resolve(packageDir, "artifacts");
 const npmDir = resolve(packageDir, "npm");
 
