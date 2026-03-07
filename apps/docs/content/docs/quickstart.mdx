@@ -1,11 +1,11 @@
 ---
 title: Quickstart
-description: Convert a PDF into PNG pages with the single public API.
+description: Convert PDFs into PNG pages from a file path or an in-memory buffer.
 ---
 
-Import `convert()` and pass either a file path or PDF bytes.
+`convert()` is the only public entrypoint you need to learn first.
 
-## Convert all pages
+## Convert all pages from a file path
 
 ```ts
 import { convert } from "@omsimos/pdf-to-images";
@@ -23,6 +23,10 @@ for (const page of pages) {
 }
 ```
 
+<Callout type="info" title="Default behavior">
+  If `pages` is omitted, the full document is rendered.
+</Callout>
+
 ## Convert selected pages
 
 Page indices are zero-based:
@@ -38,6 +42,24 @@ const pages = await convert("./report.pdf", {
 
 ## Convert from an in-memory buffer
 
+<CodeBlockTabs>
+  <CodeBlockTabsList>
+    <CodeBlockTabsTrigger value="path">File path</CodeBlockTabsTrigger>
+    <CodeBlockTabsTrigger value="buffer">In-memory buffer</CodeBlockTabsTrigger>
+  </CodeBlockTabsList>
+  <CodeBlockTab value="path">
+
+```ts
+import { convert } from "@omsimos/pdf-to-images";
+
+const pages = await convert("./invoice.pdf", {
+  dpi: 300,
+});
+```
+
+  </CodeBlockTab>
+  <CodeBlockTab value="buffer">
+
 ```ts
 import { readFile } from "node:fs/promises";
 import { convert } from "@omsimos/pdf-to-images";
@@ -48,4 +70,44 @@ const pages = await convert(bytes, {
 });
 ```
 
-Next: [API reference](./api-reference).
+  </CodeBlockTab>
+</CodeBlockTabs>
+
+## Understand the result
+
+Every page includes:
+
+- `pageIndex`
+- `data` as a PNG `Buffer`
+- `mimeType`
+- `width`
+- `height`
+- `dpi`
+
+These values are enough to:
+
+- save the image
+- display it in a UI
+- upload it to another API
+- feed it into downstream processing
+
+## Common first mistakes
+
+<Accordions type="single">
+  <Accordion title="Why are page numbers zero-based?">
+    The API uses JavaScript-style zero-based indices because `pages` is an
+    array of page indices, not human-readable page labels.
+  </Accordion>
+  <Accordion title="Why does the library return PNG buffers instead of file paths?">
+    Returning bytes keeps the package flexible for APIs, workers, storage, and
+    other downstream consumers without forcing filesystem writes.
+  </Accordion>
+  <Accordion title="Should I call this in a browser component?">
+    No. Keep it in server code only.
+  </Accordion>
+</Accordions>
+
+## Read next
+
+- [API reference](/docs/api-reference)
+- [Examples and patterns](/docs/example-patterns)

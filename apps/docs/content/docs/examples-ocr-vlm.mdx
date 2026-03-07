@@ -1,0 +1,65 @@
+---
+title: OCR and VLM examples
+description: Pass converted PNG pages into OCR engines or multimodal SDKs.
+---
+
+These examples show how to pass converted PNG pages into OCR and multimodal
+tools after rendering.
+
+## Tesseract.js
+
+```ts
+import { convert } from "@omsimos/pdf-to-images";
+import { createWorker } from "tesseract.js";
+
+const worker = await createWorker("eng");
+const [page] = await convert("./scan.pdf", {
+  pages: [0],
+  dpi: 300,
+});
+
+const result = await worker.recognize(page.data);
+console.log(result.data.text);
+```
+
+## AI SDK `generateText`
+
+```ts
+import { convert } from "@omsimos/pdf-to-images";
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+const [page] = await convert("./invoice.pdf", {
+  pages: [0],
+  dpi: 300,
+});
+
+const { text } = await generateText({
+  model: openai("gpt-4.1"),
+  messages: [
+    {
+      role: "user",
+      content: [
+        { type: "text", text: "Extract all visible text from this page." },
+        { type: "image", image: page.data },
+      ],
+    },
+  ],
+});
+```
+
+## Why the handoff is simple
+
+The PNG page result is already shaped for downstream use:
+
+- `page.data` is the image payload
+- `page.mimeType` tells the consumer what it is
+- `page.width`, `page.height`, and `page.dpi` help with validation and metrics
+
+## Boundary to preserve
+
+<Callout type="info" title="Keep responsibilities separated">
+  `@omsimos/pdf-to-images` handles the PDF-to-image step. OCR engines, VLM
+  providers, and post-processing can be layered on top in app code or separate
+  packages.
+</Callout>

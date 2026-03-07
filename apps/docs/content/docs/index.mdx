@@ -1,41 +1,91 @@
 ---
 title: Introduction
-description: What @omsimos/pdf-to-images does and where it fits in an OCR or VLM pipeline.
+description: What @omsimos/pdf-to-images is for, what it returns, and where it fits in backend and document-processing workflows.
 ---
 
-`@omsimos/pdf-to-images` is a server-side library for converting PDFs into PNG page images quickly.
+<Callout type="info" title="Single responsibility">
+  `@omsimos/pdf-to-images` converts PDF pages into PNG images with a single
+  native API.
+</Callout>
 
-It is intentionally narrow:
+`@omsimos/pdf-to-images` is a native server-side library for turning PDFs into
+PNG page images quickly.
 
-- native PDF rendering through Rust, `napi-rs`, and PDFium
-- one public API centered on `convert()`
-- PNG output that can be passed into OCR engines or multimodal models
+It fits cleanly anywhere you need page images instead of PDF bytes:
 
-It does **not** perform OCR itself. The intended pipeline is:
+<Steps>
+  <Step>
+    Start with a PDF from disk, object storage, an upload, or another API.
+  </Step>
+  <Step>
+    Use `@omsimos/pdf-to-images` to render the document into PNG page images.
+  </Step>
+  <Step>
+    Use the PNG output in previews, background jobs, OCR flows, VLM prompts,
+    or any other downstream image workflow.
+  </Step>
+</Steps>
 
-```txt
-PDF -> @omsimos/pdf-to-images -> PNG pages -> OCR / VLM / review tooling
+## What the library does
+
+<Cards>
+  <Card title="One public API" href="/docs/api-reference">
+    The package centers on `convert(input, options?)`.
+  </Card>
+  <Card title="Native rendering" href="/docs/runtime-and-environment">
+    Rendering is handled through Rust, `napi-rs`, and PDFium.
+  </Card>
+  <Card title="Lossless output" href="/docs/quickstart">
+    Each page comes back as a PNG `Buffer` with dimensions and DPI metadata.
+  </Card>
+</Cards>
+
+## What it intentionally does not do
+
+- no browser runtime support
+- no JPEG or image-encoding choice in v1
+- no document editing, annotation, or extraction APIs
+
+That narrow API keeps the package easy to reason about. You can use the PNG
+output for previews, storage, background jobs, OCR, VLM prompts, or other
+downstream processing without changing how the conversion layer works.
+
+## Output shape
+
+Each page is returned as:
+
+```ts
+type ConvertedPage = {
+  pageIndex: number;
+  data: Buffer;
+  mimeType: "image/png";
+  width: number;
+  height: number;
+  dpi: number;
+};
 ```
 
-## Why this library exists
+## Why this package exists
 
-Most OCR and VLM workflows do not want raw PDF bytes. They want page images that are:
+Many systems do not want PDF bytes directly. They want page images that are:
 
 - lossless
-- high enough resolution for text extraction
-- simple to pass into downstream systems
+- easy to inspect
+- high enough resolution for reading and analysis
+- straightforward to pass into downstream APIs
 
-This package keeps that primitive focused and fast.
+This package makes that conversion step small, explicit, and fast.
 
-## What you get back
+## Read next
 
-Each converted page includes:
-
-- `pageIndex`
-- `data` as a PNG `Buffer`
-- `mimeType`
-- `width`
-- `height`
-- `dpi`
-
-Continue with [Installation](./installation).
+<Cards>
+  <Card title="Installation" href="/docs/installation">
+    Install the package and understand the native runtime model.
+  </Card>
+  <Card title="Quickstart" href="/docs/quickstart">
+    Convert a PDF into PNG pages with the real API.
+  </Card>
+  <Card title="Examples" href="/docs/example-patterns">
+    Choose the right recipe for Node, Next.js, and downstream image workflows.
+  </Card>
+</Cards>

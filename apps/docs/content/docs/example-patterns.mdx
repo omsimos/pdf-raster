@@ -1,0 +1,39 @@
+---
+title: Examples and patterns
+description: Choose the right integration pattern for Node.js, Next.js, and downstream image workflows.
+---
+
+Use this page as an index to the most common ways teams integrate the library.
+
+<Cards>
+  <Card title="Node.js recipes" href="/docs/examples-node">
+    File-path conversion, in-memory buffers, and selected-page usage.
+  </Card>
+  <Card title="Next.js route handlers" href="/docs/examples-nextjs">
+    Keep conversion server-side and return image payloads safely.
+  </Card>
+  <Card title="Downstream integrations" href="/docs/examples-ocr-vlm">
+    Pass PNG output into OCR, AI SDK image prompts, or other consumers.
+  </Card>
+</Cards>
+
+## Which pattern should you choose?
+
+<Accordions type="single">
+  <Accordion title="I already have a PDF on disk">
+    Start with the Node.js file-path example. It is the simplest call shape and
+    works well for backend jobs or batch pipelines.
+  </Accordion>
+  <Accordion title="My PDF arrives over HTTP or from object storage">
+    Use the in-memory buffer pattern so you can keep everything off disk.
+  </Accordion>
+  <Accordion title="I need to expose this behind a web UI">
+    Use a server route or route handler. Keep the native package out of client
+    bundles.
+  </Accordion>
+  <Accordion title="I want to send pages into another system">
+    Convert first, then pass the PNG output into whatever comes next, whether
+    that is OCR, an image API, a multimodal model, or your own processing
+    pipeline.
+  </Accordion>
+</Accordions>

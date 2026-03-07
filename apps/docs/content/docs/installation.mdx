@@ -1,40 +1,91 @@
 ---
 title: Installation
-description: Add the package and understand the native runtime requirements.
+description: Install the package, understand the native runtime model, and prepare local development.
 ---
 
-Install the package with Bun or npm:
+## Install the package
+
+<CodeBlockTabs>
+  <CodeBlockTabsList>
+    <CodeBlockTabsTrigger value="bun">Bun</CodeBlockTabsTrigger>
+    <CodeBlockTabsTrigger value="npm">npm</CodeBlockTabsTrigger>
+  </CodeBlockTabsList>
+  <CodeBlockTab value="bun">
 
 ```bash
 bun add @omsimos/pdf-to-images
 ```
 
+  </CodeBlockTab>
+  <CodeBlockTab value="npm">
+
 ```bash
 npm install @omsimos/pdf-to-images
 ```
 
+  </CodeBlockTab>
+</CodeBlockTabs>
+
 ## Runtime model
 
-This package is a native server-side library.
+<Callout type="warning" title="Server-side only">
+  This package is meant for Node.js and Bun. Do not import it into browser
+  bundles.
+</Callout>
+
+The library is native and server-side:
 
 - supported runtimes: Node.js and Bun
-- primary job: render PDF pages into PNG images
-- primary use case: feed OCR or multimodal pipelines
+- rendering backend: PDFium
+- primary output: PNG `Buffer`s for each page
 
-Use it in server environments, route handlers, workers, or backend jobs. Do not import it into browser bundles.
+Use it in:
 
-## Local development
+- backend jobs
+- API routes and route handlers
+- worker processes
+- document-processing services
 
-In this monorepo, PDFium is cached locally before native builds:
+## Local development in this monorepo
+
+<Steps>
+  <Step>
+    Prefetch the current platform's PDFium binary.
 
 ```bash
 bun run pdfium:download
 ```
 
-Then build the package:
+  </Step>
+  <Step>
+    Build the native package.
 
 ```bash
 bun run --filter @omsimos/pdf-to-images build
 ```
 
-Continue with [Quickstart](./quickstart).
+  </Step>
+  <Step>
+    Run the package tests if you want to validate the local native setup.
+
+```bash
+bun run --filter @omsimos/pdf-to-images test
+```
+
+  </Step>
+</Steps>
+
+## What gets installed
+
+<Files>
+  <File name="@omsimos/pdf-to-images" />
+  <File name="native .node binding" />
+  <File name="platform PDFium library" />
+</Files>
+
+The goal is a thin JavaScript surface with native rendering under the hood.
+
+## Read next
+
+- [Quickstart](/docs/quickstart)
+- [Runtime and environment](/docs/runtime-and-environment)

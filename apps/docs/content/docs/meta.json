@@ -2,9 +2,17 @@
   "title": "Documentation",
   "pages": [
     "index",
+    "---Getting Started---",
     "installation",
     "quickstart",
+    "runtime-and-environment",
+    "---Reference---",
     "api-reference",
-    "ocr-vlm-handoff"
+    "errors-and-troubleshooting",
+    "---Examples---",
+    "example-patterns",
+    "examples-node",
+    "examples-nextjs",
+    "examples-ocr-vlm"
   ]
 }

@@ -1,0 +1,97 @@
+---
+title: Runtime and environment
+description: Understand supported runtimes, local development flow, and native PDFium expectations.
+---
+
+## Supported runtimes
+
+`@omsimos/pdf-to-images` is designed for:
+
+- Node.js
+- Bun
+
+It is not designed for:
+
+- browsers
+- React client components
+- Edge runtime
+- WebAssembly in v1
+
+## Why server-side only
+
+The package loads a native binding and a platform-specific PDFium library. That
+is the right tradeoff for throughput and installation simplicity on the server,
+but it means the package should stay on the backend side of your app.
+
+<Callout type="warning" title="Next.js runtime choice">
+  In Next.js, keep `@omsimos/pdf-to-images` inside Node.js route handlers or
+  other server-only code. Do not run it in Edge routes.
+</Callout>
+
+## Native dependency model
+
+At runtime, the package needs:
+
+- the `napi-rs` native binding
+- a matching PDFium library for the current platform
+
+In this monorepo, PDFium is cached locally and bundled during package builds.
+
+## Local development flow
+
+<Steps>
+  <Step>
+    Download or refresh the local PDFium cache:
+
+```bash
+bun run pdfium:download
+```
+
+  </Step>
+  <Step>
+    Build the native package:
+
+```bash
+bun run --filter @omsimos/pdf-to-images build
+```
+
+  </Step>
+  <Step>
+    Run tests or the example app:
+
+```bash
+bun run --filter @omsimos/pdf-to-images test
+```
+
+  </Step>
+</Steps>
+
+## Environment notes
+
+<TypeTable
+  type={{
+    PDFIUM_LIB_PATH: {
+      type: "string",
+      description:
+        "Optional explicit path to a local PDFium shared library.",
+      required: false,
+    },
+    PDFIUM_CACHE_DIR: {
+      type: "string",
+      description:
+        "Optional override for the repo-local PDFium cache directory.",
+      required: false,
+    },
+    PDFIUM_RELEASE: {
+      type: "string",
+      description:
+        "Optional release selector for the cached/downloaded PDFium binary.",
+      required: false,
+      default: '"latest"',
+    },
+  }}
+/>
+
+## If the library fails to initialize
+
+See [Errors and troubleshooting](/docs/errors-and-troubleshooting).

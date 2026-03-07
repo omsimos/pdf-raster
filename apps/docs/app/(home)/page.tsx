@@ -13,9 +13,9 @@ export default function HomePage() {
               Documentation for @omsimos/pdf-to-images
             </h1>
             <p className="max-w-2xl text-lg text-fd-muted-foreground">
-              Convert PDFs into PNG page images for OCR and multimodal
-              pipelines. This site covers installation, the `convert()` API, and
-              downstream handoff patterns.
+              Convert PDFs into PNG page images with a small native API. This
+              site covers installation, the `convert()` API, and practical usage
+              patterns for backend and document workflows.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -58,10 +58,10 @@ export default function HomePage() {
               API reference
             </Link>
             <Link
-              href="/docs/ocr-vlm-handoff"
+              href="/docs/examples-ocr-vlm"
               className="block rounded-md px-3 py-2 text-fd-foreground hover:bg-fd-accent hover:text-fd-accent-foreground"
             >
-              OCR / VLM handoff
+              Integration examples
             </Link>
           </div>
         </aside>

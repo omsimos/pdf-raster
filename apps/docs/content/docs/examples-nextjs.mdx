@@ -1,0 +1,62 @@
+---
+title: Next.js route handler example
+description: Use the package inside a Node.js route handler and return image data to the client.
+---
+
+<Callout type="warning" title="Node runtime only">
+  Keep this package in a Node.js route handler or other server-only code. Do
+  not import it into the client or Edge runtime.
+</Callout>
+
+## Example route handler
+
+<Files>
+  <Folder name="app" defaultOpen>
+    <Folder name="api" defaultOpen>
+      <Folder name="convert" defaultOpen>
+        <File name="route.ts" />
+      </Folder>
+    </Folder>
+  </Folder>
+</Files>
+
+```ts
+import { NextResponse } from "next/server";
+import { convert } from "@omsimos/pdf-to-images";
+
+export const runtime = "nodejs";
+
+export async function POST(request: Request) {
+  const formData = await request.formData();
+  const upload = formData.get("file");
+
+  if (!(upload instanceof File)) {
+    return NextResponse.json(
+      { code: "INVALID_INPUT", message: "Missing PDF upload." },
+      { status: 400 },
+    );
+  }
+
+  const bytes = Buffer.from(await upload.arrayBuffer());
+  const pages = await convert(bytes, {
+    dpi: 300,
+  });
+
+  return NextResponse.json({
+    pages: pages.map((page) => ({
+      pageIndex: page.pageIndex,
+      width: page.width,
+      height: page.height,
+      dpi: page.dpi,
+      src: `data:${page.mimeType};base64,${page.data.toString("base64")}`,
+    })),
+  });
+}
+```
+
+## Why a route handler works well
+
+- keeps the native binding on the server
+- accepts uploads directly
+- can normalize errors into stable API responses
+- lets the client render previews without touching PDFium directly

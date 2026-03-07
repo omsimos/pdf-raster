@@ -1,0 +1,70 @@
+---
+title: Errors and troubleshooting
+description: Understand stable error codes and the most common failure scenarios.
+---
+
+## Stable error model
+
+The package throws `PdfToImagesError` with a stable `code`.
+
+That lets you distinguish:
+
+- bad caller input
+- malformed or encrypted documents
+- native runtime setup failures
+- rendering failures
+
+## Common problems
+
+<Accordions type="single">
+  <Accordion title="I got INVALID_PAGE_INDEX">
+    A requested page index does not exist in the document, or the value was not
+    a non-negative integer. Remember that page indices are zero-based.
+  </Accordion>
+  <Accordion title="I got INVALID_OPTIONS">
+    Check `dpi`, `pages`, and `outputFormat`. In v1, only PNG output is
+    supported.
+  </Accordion>
+  <Accordion title="I got MALFORMED_PDF">
+    PDFium could not parse the file. This usually means the uploaded bytes are
+    not a valid PDF or the file is structurally corrupted.
+  </Accordion>
+  <Accordion title="I got PASSWORD_ERROR">
+    The document is encrypted and the password was missing or incorrect.
+  </Accordion>
+  <Accordion title="I got PDFIUM_UNAVAILABLE">
+    The native PDFium library could not be loaded. In this monorepo, run
+    `bun run pdfium:download` and rebuild the package.
+  </Accordion>
+  <Accordion title="I got RENDER_ERROR">
+    Input validation succeeded, but the native render failed. Start by testing
+    the same document with the package test flow and checking the local PDFium
+    setup.
+  </Accordion>
+</Accordions>
+
+## Troubleshooting checklist
+
+<Steps>
+  <Step>
+    Make sure the package is built for the current platform.
+  </Step>
+  <Step>
+    Refresh the local PDFium cache with `bun run pdfium:download`.
+  </Step>
+  <Step>
+    Rebuild the package with `bun run --filter @omsimos/pdf-to-images build`.
+  </Step>
+  <Step>
+    Run `bun run --filter @omsimos/pdf-to-images test` to validate the native
+    path.
+  </Step>
+</Steps>
+
+## Production guidance
+
+If you expose conversion through an API:
+
+- map stable error codes into HTTP status codes
+- log the native failure message on the server
+- avoid returning full native diagnostics to untrusted clients
