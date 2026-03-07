@@ -16,6 +16,7 @@
       "!**/build",
       "!**/out",
       "!**/node_modules",
+      "!packages/ui/src/components",
       "!**/target",
       "!**/*.node",
       "!**/*.dll",
@@ -26,6 +27,11 @@
   "formatter": {
     "enabled": true,
     "indentStyle": "space"
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
   },
   "linter": {
     "enabled": true,

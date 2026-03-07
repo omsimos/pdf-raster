@@ -7,10 +7,11 @@
     "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start",
-    "check-types": "next typegen && tsc --noEmit"
+    "check-types": "next typegen && tsc --noEmit",
+    "ui:add": "../../packages/ui/node_modules/.bin/shadcn add"
   },
   "dependencies": {
-    "@repo/ui": "*",
+    "@omsimos/ui": "*",
     "next": "16.1.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"

@@ -1,4 +1,4 @@
-import { Button } from "@repo/ui/button";
+import { Button } from "@omsimos/ui/button";
 import Image, { type ImageProps } from "next/image";
 import styles from "./page.module.css";
 
@@ -63,8 +63,8 @@ export default function Home() {
             Read our docs
           </a>
         </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
+        <Button variant="outline" className={styles.secondary}>
+          Shared shadcn button
         </Button>
       </main>
       <footer className={styles.footer}>
