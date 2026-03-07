@@ -1,4 +1,4 @@
-import { Button } from "@omsimos/ui/button";
+import { Button } from "@omsimos/ui/components/button";
 import Image, { type ImageProps } from "next/image";
 import styles from "./page.module.css";
 

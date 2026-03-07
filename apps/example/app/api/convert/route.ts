@@ -30,6 +30,14 @@ type PdfToImagesErrorCode =
   | "PDFIUM_UNAVAILABLE"
   | "RENDER_ERROR";
 
+type BenchmarkSummary = {
+  serverMs: number;
+  convertMs: number;
+  pagesRendered: number;
+  inputBytes: number;
+  outputBytes: number;
+};
+
 function isPdfToImagesError(
   error: unknown,
 ): error is Error & { code: PdfToImagesErrorCode } {
@@ -65,6 +73,8 @@ function parseDpi(input: FormDataEntryValue | null): SupportedDpi | null {
 }
 
 export async function POST(request: Request) {
+  const requestStart = performance.now();
+
   try {
     const formData = await request.formData();
     const upload = formData.get("file");
@@ -119,12 +129,26 @@ export async function POST(request: Request) {
 
     const { convert } = await loadPdfToImages();
     const buffer = Buffer.from(await upload.arrayBuffer());
+    const convertStart = performance.now();
     const pages = await convert(buffer, {
       pages: parsedPages.pages,
       dpi,
     });
+    const convertMs = performance.now() - convertStart;
+    const outputBytes = pages.reduce(
+      (total, page) => total + page.data.byteLength,
+      0,
+    );
+    const benchmark: BenchmarkSummary = {
+      serverMs: performance.now() - requestStart,
+      convertMs,
+      pagesRendered: pages.length,
+      inputBytes: buffer.byteLength,
+      outputBytes,
+    };
 
     return NextResponse.json({
+      benchmark,
       pages: pages.map((page) => ({
         pageIndex: page.pageIndex,
         width: page.width,

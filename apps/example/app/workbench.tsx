@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@omsimos/ui/button";
 import { Badge } from "@omsimos/ui/components/badge";
-import { Input } from "@omsimos/ui/input";
+import { Button } from "@omsimos/ui/components/button";
+import { Input } from "@omsimos/ui/components/input";
 import Image from "next/image";
 import { useRef, useState, useTransition } from "react";
 
@@ -23,6 +23,13 @@ type ConvertedPreviewPage = {
 };
 
 type ConvertResponse = {
+  benchmark: {
+    serverMs: number;
+    convertMs: number;
+    pagesRendered: number;
+    inputBytes: number;
+    outputBytes: number;
+  };
   pages: ConvertedPreviewPage[];
 };
 
@@ -71,6 +78,9 @@ export function ConversionWorkbench() {
   const [pagesInput, setPagesInput] = useState(DEFAULT_PAGE_INPUT);
   const [dpi, setDpi] = useState<SupportedDpi>(DEFAULT_DPI);
   const [results, setResults] = useState<ConvertedPreviewPage[]>([]);
+  const [benchmark, setBenchmark] = useState<
+    (ConvertResponse["benchmark"] & { roundTripMs: number }) | null
+  >(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [lastRunFileName, setLastRunFileName] = useState<string | null>(null);
@@ -90,21 +100,25 @@ export function ConversionWorkbench() {
 
     setErrorMessage(null);
     setResults([]);
+    setBenchmark(null);
 
     const formData = new FormData();
     formData.set("file", selectedFile);
     formData.set("pages", pagesInput);
     formData.set("dpi", String(dpi));
 
+    const requestStart = performance.now();
     const response = await fetch("/api/convert", {
       method: "POST",
       body: formData,
     });
+    const clientRequestMs = performance.now() - requestStart;
 
     const payload = await response.json().catch(() => null);
 
     if (!response.ok) {
       setLastRunFileName(null);
+      setBenchmark(null);
       setErrorMessage(
         isErrorResponse(payload)
           ? (payload.message ??
@@ -114,9 +128,47 @@ export function ConversionWorkbench() {
       return;
     }
 
-    setResults(isConvertResponse(payload) ? payload.pages : []);
+    if (isConvertResponse(payload)) {
+      setResults(payload.pages);
+      setBenchmark({
+        ...payload.benchmark,
+        roundTripMs: clientRequestMs,
+      });
+    } else {
+      setResults([]);
+      setBenchmark(null);
+    }
     setLastRunFileName(selectedFile.name);
   }
+
+  const stats = benchmark
+    ? [
+        {
+          label: "Round trip",
+          value: `${benchmark.roundTripMs.toFixed(0)} ms`,
+        },
+        {
+          label: "Server",
+          value: `${benchmark.serverMs.toFixed(0)} ms`,
+        },
+        {
+          label: "Convert",
+          value: `${benchmark.convertMs.toFixed(0)} ms`,
+        },
+        {
+          label: "Pages",
+          value: String(benchmark.pagesRendered),
+        },
+        {
+          label: "Input",
+          value: formatFileSize(benchmark.inputBytes),
+        },
+        {
+          label: "Output",
+          value: formatFileSize(benchmark.outputBytes),
+        },
+      ]
+    : [];
 
   return (
     <section className="grid min-h-screen gap-4 p-4 sm:p-5 lg:h-full lg:min-h-0 lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-5 lg:p-5">
@@ -303,6 +355,35 @@ export function ConversionWorkbench() {
               )}
             </div>
           </div>
+
+          {benchmark ? (
+            <details className="group border border-[var(--example-border)] bg-[var(--example-panel-strong)]">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3">
+                <div>
+                  <p className="lab-grid-label">Benchmark</p>
+                  <p className="mt-1 text-sm text-[var(--example-muted)]">
+                    Conversion timing and payload size
+                  </p>
+                </div>
+                <span className="font-mono text-xs uppercase tracking-[0.2em] text-[var(--example-muted)] transition-transform group-open:rotate-45">
+                  +
+                </span>
+              </summary>
+              <div className="grid gap-3 border-t border-[var(--example-border)] p-4 md:grid-cols-2 xl:grid-cols-3">
+                {stats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="border border-[var(--example-border)] bg-[var(--example-canvas)]/55 px-4 py-3"
+                  >
+                    <p className="lab-grid-label">{stat.label}</p>
+                    <p className="mt-2 text-lg font-semibold tracking-[-0.05em]">
+                      {stat.value}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </details>
+          ) : null}
 
           {results.length === 0 ? (
             <div className="grid flex-1 min-h-[26rem] place-items-center border border-dashed border-[var(--example-border)] bg-[var(--example-panel-strong)] p-8 text-center">
