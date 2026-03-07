@@ -1,0 +1,107 @@
+@import "@omsimos/ui/styles.css";
+
+:root {
+  --example-canvas: #f3efe3;
+  --example-ink: #101114;
+  --example-panel: rgba(255, 252, 244, 0.86);
+  --example-panel-strong: rgba(255, 252, 244, 0.96);
+  --example-border: rgba(16, 17, 20, 0.18);
+  --example-muted: rgba(16, 17, 20, 0.62);
+  --example-accent: #eb5e28;
+  --example-accent-soft: rgba(235, 94, 40, 0.12);
+  --example-grid: rgba(16, 17, 20, 0.055);
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(235, 94, 40, 0.11), transparent 24%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), transparent 30%),
+    var(--example-canvas);
+  color: var(--example-ink);
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, var(--example-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--example-grid) 1px, transparent 1px);
+  background-position: center;
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black 42%, transparent 94%);
+  pointer-events: none;
+}
+
+pre,
+code {
+  font-family: var(--font-geist-mono), monospace;
+}
+
+::selection {
+  background: rgba(235, 94, 40, 0.18);
+}
+
+@layer components {
+  .lab-shell {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--example-border);
+    background: var(--example-panel);
+    box-shadow:
+      0 22px 55px rgba(16, 17, 20, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(14px);
+  }
+
+  .lab-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.55),
+      transparent 38%,
+      transparent 62%,
+      rgba(16, 17, 20, 0.03)
+    );
+  }
+
+  .lab-grid-label {
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--example-muted);
+  }
+
+  .lab-section-title {
+    font-size: clamp(1.2rem, 1rem + 0.8vw, 1.8rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  .lab-kicker {
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--example-accent);
+  }
+
+  .lab-rule {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--example-border) 15%,
+      var(--example-border) 85%,
+      transparent
+    );
+  }
+}

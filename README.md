@@ -17,8 +17,8 @@ This Turborepo includes the following packages/apps:
 ### Apps and Packages
 
 - `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@omsimos/ui`: a shared React component library for both `web` and `docs`
+- `example`: a [Next.js](https://nextjs.org/) app that demonstrates `@omsimos/pdf-to-images`
+- `@omsimos/ui`: a shared React component library for both `example` and `docs`
 - `@omsimos/pdf-to-images`: a native PDF-to-images package for Node.js and Bun
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
@@ -49,6 +49,13 @@ cd my-turborepo
 npx turbo build
 yarn dlx turbo build
 pnpm exec turbo build
+```
+
+If you need to prefetch the current platform's PDFium binary into the local
+cache before building the native package, run:
+
+```sh
+bun run pdfium:download
 ```
 
 You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
@@ -92,15 +99,15 @@ You can develop a specific package by using a [filter](https://turborepo.dev/doc
 With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
 
 ```sh
-turbo dev --filter=web
+turbo dev --filter=example
 ```
 
 Without global `turbo`:
 
 ```sh
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+npx turbo dev --filter=example
+yarn exec turbo dev --filter=example
+pnpm exec turbo dev --filter=example
 ```
 
 ### Remote Caching

@@ -40,12 +40,15 @@
     ]
   },
   "scripts": {
-    "build": "bun run build:types && bun run build:native",
-    "build:debug": "bun run build:types && bun run build:native:debug",
+    "build": "bun run build:types && bun run bundle:pdfium && bun run build:native",
+    "build:debug": "bun run build:types && bun run bundle:pdfium && bun run build:native:debug",
     "build:types": "tsc -p tsconfig.json",
     "build:native": "napi build --platform --release",
     "build:native:debug": "napi build --platform",
+    "bundle:pdfium": "node ../../scripts/bundle-pdfium.mjs",
+    "clean": "node ../../scripts/clean.mjs .turbo dist target '*.node' '*.so' '*.dylib' '*.dll'",
     "check-types": "tsc --noEmit",
+    "pdfium:download": "node ../../scripts/prefetch-pdfium.mjs",
     "prepublishOnly": "bun run build && napi prepublish -t npm"
   },
   "keywords": [

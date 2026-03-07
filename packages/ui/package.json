@@ -7,15 +7,17 @@
     "./button": "./src/button.tsx",
     "./card": "./src/card.tsx",
     "./code": "./src/code.tsx",
+    "./input": "./src/input.tsx",
     "./components/*": "./src/components/*.tsx",
     "./hooks/*": "./src/hooks/*.ts",
     "./lib/*": "./src/lib/*.ts",
     "./styles.css": "./src/styles/globals.css"
   },
   "scripts": {
+    "clean": "node ../../scripts/clean.mjs .turbo",
     "generate:component": "turbo gen react-component",
     "check-types": "tsc --noEmit",
-    "ui:add": "shadcn add --cwd ../../apps/web"
+    "ui:add": "shadcn add --cwd ../../apps/example"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",

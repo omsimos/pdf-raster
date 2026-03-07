@@ -1,7 +1,13 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
-  "globalEnv": ["PDFIUM_LIB_PATH", "NAPI_RS_NATIVE_LIBRARY_PATH"],
+  "globalEnv": [
+    "PDFIUM_CACHE_DIR",
+    "PDFIUM_DOWNLOAD_URL",
+    "PDFIUM_LIB_PATH",
+    "PDFIUM_RELEASE",
+    "NAPI_RS_NATIVE_LIBRARY_PATH"
+  ],
   "tasks": {
     "//#format-and-lint": {},
     "//#format-and-lint:fix": {
@@ -22,6 +28,9 @@
     },
     "check-types": {
       "dependsOn": ["^check-types"]
+    },
+    "clean": {
+      "cache": false
     },
     "dev": {
       "cache": false,

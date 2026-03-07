@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { ConvertedPage } from "./types.js";
@@ -42,6 +42,7 @@ type NativeBinding = {
 const require = createRequire(import.meta.url);
 const here = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(here, "..");
+const workspaceRoot = resolve(packageRoot, "..", "..");
 const loadErrors: unknown[] = [];
 
 function isMusl(): boolean {
@@ -75,21 +76,7 @@ function ensureBundledPdfiumPath(): void {
     return;
   }
 
-  const candidates =
-    process.platform === "win32"
-      ? [
-          join(packageRoot, "pdfium.dll"),
-          join(packageRoot, "bin", "pdfium.dll"),
-        ]
-      : process.platform === "darwin"
-        ? [
-            join(packageRoot, "libpdfium.dylib"),
-            join(packageRoot, "lib", "libpdfium.dylib"),
-          ]
-        : [
-            join(packageRoot, "libpdfium.so"),
-            join(packageRoot, "lib", "libpdfium.so"),
-          ];
+  const candidates = getPdfiumCandidates();
 
   const bundled = candidates.find((candidate) => existsSync(candidate));
   if (bundled) {
@@ -98,28 +85,119 @@ function ensureBundledPdfiumPath(): void {
 }
 
 function getBundledPdfiumPath(): string | undefined {
-  const candidates =
-    process.platform === "win32"
-      ? [
-          join(packageRoot, "pdfium.dll"),
-          join(packageRoot, "bin", "pdfium.dll"),
-        ]
-      : process.platform === "darwin"
-        ? [
-            join(packageRoot, "libpdfium.dylib"),
-            join(packageRoot, "lib", "libpdfium.dylib"),
-          ]
-        : [
-            join(packageRoot, "libpdfium.so"),
-            join(packageRoot, "lib", "libpdfium.so"),
-          ];
-
-  return candidates.find((candidate) => existsSync(candidate));
+  return getPdfiumCandidates().find((candidate) => existsSync(candidate));
 }
 
-function requireLocal(fileName: string): NativeBinding | null {
+function getPdfiumFileName(): string {
+  if (process.platform === "win32") {
+    return "pdfium.dll";
+  }
+
+  if (process.platform === "darwin") {
+    return "libpdfium.dylib";
+  }
+
+  return "libpdfium.so";
+}
+
+function getPdfiumCacheKey(): string {
+  const linuxTarget = `${process.platform}-${process.arch}`;
+
+  if (process.platform !== "linux") {
+    return process.platform === "win32"
+      ? `win32-${process.arch}-msvc`
+      : linuxTarget;
+  }
+
+  return isMusl() ? `${linuxTarget}-musl` : `${linuxTarget}-gnu`;
+}
+
+function getPdfiumReleaseSegment(): string {
+  return (process.env.PDFIUM_RELEASE || "latest").replaceAll(
+    /[^a-zA-Z0-9._-]+/g,
+    "-",
+  );
+}
+
+function getPdfiumCandidates(): string[] {
+  const fileName = getPdfiumFileName();
+  const cacheRoot = process.env.PDFIUM_CACHE_DIR
+    ? resolve(process.env.PDFIUM_CACHE_DIR)
+    : join(workspaceRoot, ".cache", "pdfium");
+
+  return [
+    join(packageRoot, fileName),
+    join(packageRoot, "lib", fileName),
+    join(cacheRoot, getPdfiumReleaseSegment(), getPdfiumCacheKey(), fileName),
+  ];
+}
+
+function requireLocalDarwinArm64(): NativeBinding | null {
   try {
-    return require(join(packageRoot, fileName)) as NativeBinding;
+    return require("../pdf-to-images.darwin-arm64.node") as NativeBinding;
+  } catch (error) {
+    loadErrors.push(error);
+    return null;
+  }
+}
+
+function requireLocalDarwinX64(): NativeBinding | null {
+  try {
+    return require("../pdf-to-images.darwin-x64.node") as NativeBinding;
+  } catch (error) {
+    loadErrors.push(error);
+    return null;
+  }
+}
+
+function requireLocalLinuxArm64Gnu(): NativeBinding | null {
+  try {
+    return require("../pdf-to-images.linux-arm64-gnu.node") as NativeBinding;
+  } catch (error) {
+    loadErrors.push(error);
+    return null;
+  }
+}
+
+function requireLocalLinuxArm64Musl(): NativeBinding | null {
+  try {
+    return require("../pdf-to-images.linux-arm64-musl.node") as NativeBinding;
+  } catch (error) {
+    loadErrors.push(error);
+    return null;
+  }
+}
+
+function requireLocalLinuxX64Gnu(): NativeBinding | null {
+  try {
+    return require("../pdf-to-images.linux-x64-gnu.node") as NativeBinding;
+  } catch (error) {
+    loadErrors.push(error);
+    return null;
+  }
+}
+
+function requireLocalLinuxX64Musl(): NativeBinding | null {
+  try {
+    return require("../pdf-to-images.linux-x64-musl.node") as NativeBinding;
+  } catch (error) {
+    loadErrors.push(error);
+    return null;
+  }
+}
+
+function requireLocalWin32Arm64Msvc(): NativeBinding | null {
+  try {
+    return require("../pdf-to-images.win32-arm64-msvc.node") as NativeBinding;
+  } catch (error) {
+    loadErrors.push(error);
+    return null;
+  }
+}
+
+function requireLocalWin32X64Msvc(): NativeBinding | null {
+  try {
+    return require("../pdf-to-images.win32-x64-msvc.node") as NativeBinding;
   } catch (error) {
     loadErrors.push(error);
     return null;
@@ -148,7 +226,7 @@ function loadNativeBinding(): NativeBinding {
   if (process.platform === "darwin") {
     if (process.arch === "arm64") {
       return (
-        requireLocal("pdf-to-images.darwin-arm64.node") ??
+        requireLocalDarwinArm64() ??
         requirePackage("@omsimos/pdf-to-images-darwin-arm64") ??
         failToLoad()
       );
@@ -156,7 +234,7 @@ function loadNativeBinding(): NativeBinding {
 
     if (process.arch === "x64") {
       return (
-        requireLocal("pdf-to-images.darwin-x64.node") ??
+        requireLocalDarwinX64() ??
         requirePackage("@omsimos/pdf-to-images-darwin-x64") ??
         failToLoad()
       );
@@ -166,9 +244,9 @@ function loadNativeBinding(): NativeBinding {
   if (process.platform === "linux") {
     if (process.arch === "arm64") {
       return (
-        requireLocal(
-          `pdf-to-images.linux-arm64-${isMusl() ? "musl" : "gnu"}.node`,
-        ) ??
+        (isMusl()
+          ? requireLocalLinuxArm64Musl()
+          : requireLocalLinuxArm64Gnu()) ??
         requirePackage(
           `@omsimos/pdf-to-images-linux-arm64-${isMusl() ? "musl" : "gnu"}`,
         ) ??
@@ -178,9 +256,7 @@ function loadNativeBinding(): NativeBinding {
 
     if (process.arch === "x64") {
       return (
-        requireLocal(
-          `pdf-to-images.linux-x64-${isMusl() ? "musl" : "gnu"}.node`,
-        ) ??
+        (isMusl() ? requireLocalLinuxX64Musl() : requireLocalLinuxX64Gnu()) ??
         requirePackage(
           `@omsimos/pdf-to-images-linux-x64-${isMusl() ? "musl" : "gnu"}`,
         ) ??
@@ -192,7 +268,7 @@ function loadNativeBinding(): NativeBinding {
   if (process.platform === "win32") {
     if (process.arch === "arm64") {
       return (
-        requireLocal("pdf-to-images.win32-arm64-msvc.node") ??
+        requireLocalWin32Arm64Msvc() ??
         requirePackage("@omsimos/pdf-to-images-win32-arm64-msvc") ??
         failToLoad()
       );
@@ -200,7 +276,7 @@ function loadNativeBinding(): NativeBinding {
 
     if (process.arch === "x64") {
       return (
-        requireLocal("pdf-to-images.win32-x64-msvc.node") ??
+        requireLocalWin32X64Msvc() ??
         requirePackage("@omsimos/pdf-to-images-win32-x64-msvc") ??
         failToLoad()
       );

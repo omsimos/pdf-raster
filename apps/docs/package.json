@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "next dev --port 3001",
     "build": "next build",
+    "clean": "node ../../scripts/clean.mjs .next .turbo",
     "start": "next start",
-    "check-types": "next typegen && tsc --noEmit",
-    "ui:add": "../../packages/ui/node_modules/.bin/shadcn add"
+    "check-types": "tsc --noEmit",
+    "ui:add": "bunx --bun shadcn@latest add"
   },
   "dependencies": {
     "@omsimos/ui": "*",

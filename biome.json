@@ -11,6 +11,7 @@
       "**",
       "!**/.next",
       "!**/.turbo",
+      "!**/.cache",
       "!**/coverage",
       "!**/dist",
       "!**/build",
