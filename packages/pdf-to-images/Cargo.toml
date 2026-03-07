@@ -1,0 +1,18 @@
+[package]
+name = "omsimos_pdf_to_images"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+image = { version = "0.25.8", default-features = false, features = ["png"] }
+napi = { version = "3.8.3", features = ["async", "napi8"] }
+napi-derive = "3.5.2"
+pdfium-render = { version = "0.8.37", features = ["sync"] }
+tokio = { version = "1.48.0", features = ["rt", "rt-multi-thread"] }
+
+[build-dependencies]
+napi-build = "2.3.1"
