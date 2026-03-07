@@ -75,7 +75,7 @@ jobs:
       - name: Build native binding
         shell: bash
         run: |
-          bunx --bun napi build \
+          bunx --bun @napi-rs/cli build \
             --cwd packages/pdf-to-images \
             --platform \
             --release \
