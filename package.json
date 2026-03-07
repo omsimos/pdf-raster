@@ -4,14 +4,19 @@
   "scripts": {
     "build": "turbo run build",
     "clean": "turbo run clean",
+    "changeset": "changeset",
     "dev": "turbo run dev",
     "format-and-lint": "biome check .",
     "format-and-lint:fix": "biome check . --write",
     "check-types": "turbo run check-types",
     "pdfium:download": "bun run --filter @omsimos/pdf-to-images pdfium:download",
+    "release:check-changeset": "node ./scripts/check-changeset.mjs",
+    "release:publish": "node ./scripts/publish-packages.mjs",
+    "version-packages": "changeset version",
     "test": "turbo run test"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.7",
     "@biomejs/biome": "^2.2.4",
     "@tailwindcss/postcss": "^4.1.13",
     "tailwindcss": "^4.1.13",

@@ -1,0 +1,139 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-native:
+    name: Build ${{ matrix.platform_arch_abi }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-13
+            target: x86_64-apple-darwin
+            platform_arch_abi: darwin-x64
+            rust_targets: x86_64-apple-darwin
+            build_flags: ""
+          - runner: macos-13
+            target: aarch64-apple-darwin
+            platform_arch_abi: darwin-arm64
+            rust_targets: aarch64-apple-darwin
+            build_flags: "--target aarch64-apple-darwin"
+          - runner: ubuntu-24.04
+            target: x86_64-unknown-linux-gnu
+            platform_arch_abi: linux-x64-gnu
+            rust_targets: x86_64-unknown-linux-gnu
+            build_flags: ""
+          - runner: ubuntu-24.04
+            target: aarch64-unknown-linux-gnu
+            platform_arch_abi: linux-arm64-gnu
+            rust_targets: aarch64-unknown-linux-gnu
+            build_flags: "--target aarch64-unknown-linux-gnu --use-napi-cross"
+          - runner: windows-latest
+            target: x86_64-pc-windows-msvc
+            platform_arch_abi: win32-x64-msvc
+            rust_targets: x86_64-pc-windows-msvc
+            build_flags: ""
+          - runner: windows-latest
+            target: aarch64-pc-windows-msvc
+            platform_arch_abi: win32-arm64-msvc
+            rust_targets: aarch64-pc-windows-msvc
+            build_flags: "--target aarch64-pc-windows-msvc --cross-compile"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build TypeScript entrypoint
+        run: bun run --filter @omsimos/pdf-to-images build:types
+
+      - name: Build native binding
+        shell: bash
+        run: |
+          bunx --bun napi build \
+            --cwd packages/pdf-to-images \
+            --platform \
+            --release \
+            --output-dir artifacts/${{ matrix.platform_arch_abi }} \
+            ${{ matrix.build_flags }}
+
+      - name: Stage PDFium library
+        run: node scripts/stage-pdfium-artifact.mjs packages/pdf-to-images/artifacts/${{ matrix.platform_arch_abi }}
+        env:
+          PDFIUM_TARGET: ${{ matrix.target }}
+
+      - name: Upload native artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-${{ matrix.platform_arch_abi }}
+          path: packages/pdf-to-images/artifacts/${{ matrix.platform_arch_abi }}
+          if-no-files-found: error
+
+  release:
+    name: Changesets Release
+    runs-on: ubuntu-latest
+    needs: build-native
+    permissions:
+      contents: write
+      id-token: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Download native artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: native-*
+          path: packages/pdf-to-images/artifacts
+
+      - name: Release
+        uses: changesets/action@v1
+        with:
+          commit: "chore: version packages"
+          title: "Version Packages"
+          version: bun run version-packages
+          publish: bun run release:publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_CONFIG_PROVENANCE: "true"

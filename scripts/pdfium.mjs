@@ -25,8 +25,61 @@ function getConfiguredRelease() {
   return process.env.PDFIUM_RELEASE?.trim() || "latest";
 }
 
+function getRequestedTarget() {
+  return process.env.PDFIUM_TARGET?.trim() || null;
+}
+
 function getTargetDescriptor() {
   const musl = isMusl();
+  const target = getRequestedTarget();
+
+  if (target === "aarch64-apple-darwin" || target === "darwin-arm64") {
+    return {
+      archiveName: "pdfium-mac-arm64.tgz",
+      cacheKey: "darwin-arm64",
+      targetFileName: "libpdfium.dylib",
+    };
+  }
+
+  if (target === "x86_64-apple-darwin" || target === "darwin-x64") {
+    return {
+      archiveName: "pdfium-mac-x64.tgz",
+      cacheKey: "darwin-x64",
+      targetFileName: "libpdfium.dylib",
+    };
+  }
+
+  if (target === "aarch64-unknown-linux-gnu" || target === "linux-arm64-gnu") {
+    return {
+      archiveName: "pdfium-linux-arm64.tgz",
+      cacheKey: "linux-arm64-gnu",
+      targetFileName: "libpdfium.so",
+    };
+  }
+
+  if (target === "x86_64-unknown-linux-gnu" || target === "linux-x64-gnu") {
+    return {
+      archiveName: "pdfium-linux-x64.tgz",
+      cacheKey: "linux-x64-gnu",
+      targetFileName: "libpdfium.so",
+    };
+  }
+
+  if (target === "aarch64-pc-windows-msvc" || target === "win32-arm64-msvc") {
+    return {
+      archiveName: "pdfium-win-arm64.tgz",
+      cacheKey: "win32-arm64-msvc",
+      targetFileName: "pdfium.dll",
+    };
+  }
+
+  if (target === "x86_64-pc-windows-msvc" || target === "win32-x64-msvc") {
+    return {
+      archiveName: "pdfium-win-x64.tgz",
+      cacheKey: "win32-x64-msvc",
+      targetFileName: "pdfium.dll",
+    };
+  }
 
   if (process.platform === "darwin" && process.arch === "arm64") {
     return {
@@ -237,6 +290,7 @@ export {
   getConfiguredRelease,
   getPdfiumCacheRoot,
   getPdfiumDownloadUrl,
+  getRequestedTarget,
   getTargetDescriptor,
   getWorkspacePdfiumCandidates,
   repoRoot,

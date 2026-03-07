@@ -5,6 +5,14 @@
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/omsimos/pdf-to-images.git"
+  },
+  "homepage": "https://github.com/omsimos/pdf-to-images#readme",
+  "bugs": {
+    "url": "https://github.com/omsimos/pdf-to-images/issues"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -15,11 +23,7 @@
     }
   },
   "files": [
-    "dist",
-    "*.node",
-    "*.so",
-    "*.dylib",
-    "*.dll"
+    "dist"
   ],
   "engines": {
     "node": ">=18"
@@ -30,6 +34,7 @@
   },
   "napi": {
     "binaryName": "pdf-to-images",
+    "packageName": "@omsimos/pdf-to-images",
     "targets": [
       "x86_64-apple-darwin",
       "aarch64-apple-darwin",
@@ -45,14 +50,17 @@
     "build:types": "tsc -p tsconfig.json",
     "build:native": "napi build --platform --release",
     "build:native:debug": "napi build --platform",
+    "create-npm-dirs": "napi create-npm-dirs --npm-dir npm",
+    "collect-npm-artifacts": "napi artifacts --output-dir artifacts --npm-dir npm",
+    "prepare-npm-packages": "bun run create-npm-dirs && bun run collect-npm-artifacts && node ../../scripts/copy-pdfium-to-npm.mjs && napi prepublish --npm-dir npm --gh-release=false --skip-optional-publish",
     "bundle:pdfium": "node ../../scripts/bundle-pdfium.mjs",
-    "clean": "node ../../scripts/clean.mjs .turbo dist target '*.node' '*.so' '*.dylib' '*.dll'",
+    "clean": "node ../../scripts/clean.mjs .turbo artifacts dist npm target '*.node' '*.so' '*.dylib' '*.dll'",
     "check-types": "tsc --noEmit",
     "pdfium:download": "node ../../scripts/prefetch-pdfium.mjs",
     "test": "bun run build && bun run test:bun && bun run test:node",
     "test:bun": "bun test ./test",
     "test:node": "node ./test/node-smoke.mjs",
-    "prepublishOnly": "bun run build && napi prepublish -t npm"
+    "prepublishOnly": "bun run build && bun run create-npm-dirs && napi prepublish --npm-dir npm --gh-release=false --skip-optional-publish"
   },
   "keywords": [
     "pdf",
@@ -60,6 +68,8 @@
     "ocr",
     "vlm",
     "image",
+    "jpeg",
+    "webp",
     "png",
     "napi-rs"
   ],

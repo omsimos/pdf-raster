@@ -159,27 +159,9 @@ function requireLocalLinuxArm64Gnu(): NativeBinding | null {
   }
 }
 
-function requireLocalLinuxArm64Musl(): NativeBinding | null {
-  try {
-    return require("../pdf-to-images.linux-arm64-musl.node") as NativeBinding;
-  } catch (error) {
-    loadErrors.push(error);
-    return null;
-  }
-}
-
 function requireLocalLinuxX64Gnu(): NativeBinding | null {
   try {
     return require("../pdf-to-images.linux-x64-gnu.node") as NativeBinding;
-  } catch (error) {
-    loadErrors.push(error);
-    return null;
-  }
-}
-
-function requireLocalLinuxX64Musl(): NativeBinding | null {
-  try {
-    return require("../pdf-to-images.linux-x64-musl.node") as NativeBinding;
   } catch (error) {
     loadErrors.push(error);
     return null;
@@ -242,24 +224,24 @@ function loadNativeBinding(): NativeBinding {
   }
 
   if (process.platform === "linux") {
+    if (isMusl()) {
+      throw new Error(
+        "Failed to load the native @omsimos/pdf-to-images binding for linux musl. Prebuilt musl artifacts are not published for this package.",
+      );
+    }
+
     if (process.arch === "arm64") {
       return (
-        (isMusl()
-          ? requireLocalLinuxArm64Musl()
-          : requireLocalLinuxArm64Gnu()) ??
-        requirePackage(
-          `@omsimos/pdf-to-images-linux-arm64-${isMusl() ? "musl" : "gnu"}`,
-        ) ??
+        requireLocalLinuxArm64Gnu() ??
+        requirePackage("@omsimos/pdf-to-images-linux-arm64-gnu") ??
         failToLoad()
       );
     }
 
     if (process.arch === "x64") {
       return (
-        (isMusl() ? requireLocalLinuxX64Musl() : requireLocalLinuxX64Gnu()) ??
-        requirePackage(
-          `@omsimos/pdf-to-images-linux-x64-${isMusl() ? "musl" : "gnu"}`,
-        ) ??
+        requireLocalLinuxX64Gnu() ??
+        requirePackage("@omsimos/pdf-to-images-linux-x64-gnu") ??
         failToLoad()
       );
     }
