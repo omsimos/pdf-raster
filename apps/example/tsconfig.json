@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@omsimos/pdf-to-images": ["../../packages/pdf-to-images/src/index.ts"]
     },
     "plugins": [
       {
