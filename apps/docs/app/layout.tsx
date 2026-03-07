@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     template: "%s | omsimos/pdf-to-images",
   },
   description:
-    "Documentation for @omsimos/pdf-to-images, a native PDF to PNG library for backend and document workflows.",
+    "Documentation for @omsimos/pdf-to-images, a native PDF to images library for backend and document workflows.",
 };
 
 export default function Layout({ children }: LayoutProps<"/">) {

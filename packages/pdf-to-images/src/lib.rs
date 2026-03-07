@@ -55,6 +55,51 @@ struct ConvertRequest {
   pdfium_library_path: Option<String>,
 }
 
+#[derive(Clone, Copy, Debug)]
+enum OutputFormat {
+  Jpeg,
+  Png,
+  Webp,
+}
+
+impl OutputFormat {
+  fn from_option(value: Option<&str>) -> std::result::Result<Self, ConvertError> {
+    match value.unwrap_or("png") {
+      "jpeg" => Ok(Self::Jpeg),
+      "png" => Ok(Self::Png),
+      "webp" => Ok(Self::Webp),
+      _ => Err(ConvertError::new(
+        ErrorCode::InvalidOptions,
+        "Supported output formats are png, jpeg, and webp.",
+      )),
+    }
+  }
+
+  fn as_str(self) -> &'static str {
+    match self {
+      Self::Jpeg => "jpeg",
+      Self::Png => "png",
+      Self::Webp => "webp",
+    }
+  }
+
+  fn image_format(self) -> ImageFormat {
+    match self {
+      Self::Jpeg => ImageFormat::Jpeg,
+      Self::Png => ImageFormat::Png,
+      Self::Webp => ImageFormat::WebP,
+    }
+  }
+
+  fn mime_type(self) -> &'static str {
+    match self {
+      Self::Jpeg => "image/jpeg",
+      Self::Png => "image/png",
+      Self::Webp => "image/webp",
+    }
+  }
+}
+
 #[derive(Debug, Clone, Copy)]
 enum ErrorCode {
   InvalidOptions,
@@ -150,14 +195,7 @@ fn bind_pdfium(pdfium_library_path: Option<&str>) -> std::result::Result<Box<dyn
 }
 
 fn normalize_options(options: NativeConvertOptions) -> std::result::Result<NativeConvertOptions, ConvertError> {
-  if let Some(output_format) = &options.output_format {
-    if output_format != "png" {
-      return Err(ConvertError::new(
-        ErrorCode::InvalidOptions,
-        "Only PNG output is supported in v1.",
-      ));
-    }
-  }
+  let output_format = OutputFormat::from_option(options.output_format.as_deref())?;
 
   if let Some(dpi) = options.dpi {
     if dpi == 0 {
@@ -169,7 +207,7 @@ fn normalize_options(options: NativeConvertOptions) -> std::result::Result<Nativ
   }
 
   Ok(NativeConvertOptions {
-    output_format: Some("png".to_owned()),
+    output_format: Some(output_format.as_str().to_owned()),
     ..options
   })
 }
@@ -203,11 +241,21 @@ fn resolve_page_indices(page_count: usize, pages: Option<Vec<u32>>) -> std::resu
   }
 }
 
-fn encode_png(image: &DynamicImage) -> std::result::Result<Vec<u8>, ConvertError> {
+fn encode_image(image: &DynamicImage, output_format: OutputFormat) -> std::result::Result<Vec<u8>, ConvertError> {
   let mut cursor = Cursor::new(Vec::new());
-  image
-    .write_to(&mut cursor, ImageFormat::Png)
-    .map_err(|error| ConvertError::new(ErrorCode::RenderError, format!("Failed to encode PNG output: {error}")))?;
+
+  match output_format {
+    OutputFormat::Jpeg => DynamicImage::ImageRgb8(image.to_rgb8()),
+    OutputFormat::Png | OutputFormat::Webp => image.clone(),
+  }
+  .write_to(&mut cursor, output_format.image_format())
+  .map_err(|error| {
+    ConvertError::new(
+      ErrorCode::RenderError,
+      format!("Failed to encode {} output: {error}", output_format.as_str()),
+    )
+  })?;
+
   Ok(cursor.into_inner())
 }
 
@@ -239,6 +287,7 @@ fn render_pages(request: ConvertRequest) -> std::result::Result<Vec<NativeConver
   let dpi = options.dpi.unwrap_or(300);
   let password = options.password.as_deref();
   let render_annotations = options.render_annotations.unwrap_or(true);
+  let output_format = OutputFormat::from_option(options.output_format.as_deref())?;
 
   let pdfium_lock = get_pdfium(request.pdfium_library_path.as_deref())?;
   let pdfium = pdfium_lock.lock().map_err(|_| {
@@ -284,12 +333,12 @@ fn render_pages(request: ConvertRequest) -> std::result::Result<Vec<NativeConver
     }
 
     let dynamic_image = DynamicImage::ImageRgba8(image);
-    let png = encode_png(&dynamic_image)?;
+    let image_bytes = encode_image(&dynamic_image, output_format)?;
 
     converted.push(NativeConvertedPage {
       page_index: page_index as u32,
-      data: png.into(),
-      mime_type: "image/png".to_owned(),
+      data: image_bytes.into(),
+      mime_type: output_format.mime_type().to_owned(),
       width: dynamic_image.width(),
       height: dynamic_image.height(),
       dpi,

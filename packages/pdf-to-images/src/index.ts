@@ -60,10 +60,15 @@ function normalizeCrop(crop: Crop | undefined): Crop | undefined {
 }
 
 function normalizeOptions(options: ConvertOptions = {}): ConvertOptions {
-  if (options.outputFormat && options.outputFormat !== "png") {
+  if (
+    options.outputFormat &&
+    options.outputFormat !== "jpeg" &&
+    options.outputFormat !== "png" &&
+    options.outputFormat !== "webp"
+  ) {
     throw new PdfToImagesError(
       "INVALID_OPTIONS",
-      "Only PNG output is supported in v1.",
+      "Supported output formats are png, jpeg, and webp.",
     );
   }
 
@@ -97,7 +102,7 @@ function normalizeOptions(options: ConvertOptions = {}): ConvertOptions {
   return {
     pages: options.pages?.map((pageIndex) => Math.trunc(pageIndex)),
     dpi: options.dpi !== undefined ? Math.trunc(options.dpi) : undefined,
-    outputFormat: "png",
+    outputFormat: options.outputFormat ?? "png",
     password: options.password,
     crop: normalizeCrop(options.crop),
     renderAnnotations: options.renderAnnotations,

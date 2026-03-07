@@ -4,12 +4,12 @@ description: What @omsimos/pdf-to-images is for, what it returns, and where it f
 ---
 
 <Callout type="info" title="Single responsibility">
-  `@omsimos/pdf-to-images` converts PDF pages into PNG images with a single
+  `@omsimos/pdf-to-images` converts PDF pages into image buffers with a single
   native API.
 </Callout>
 
 `@omsimos/pdf-to-images` is a native server-side library for turning PDFs into
-PNG page images quickly.
+page images quickly.
 
 It fits cleanly anywhere you need page images instead of PDF bytes:
 
@@ -18,11 +18,11 @@ It fits cleanly anywhere you need page images instead of PDF bytes:
     Start with a PDF from disk, object storage, an upload, or another API.
   </Step>
   <Step>
-    Use `@omsimos/pdf-to-images` to render the document into PNG page images.
+    Use `@omsimos/pdf-to-images` to render the document into page images.
   </Step>
   <Step>
-    Use the PNG output in previews, background jobs, OCR flows, VLM prompts,
-    or any other downstream image workflow.
+    Use the output in previews, background jobs, OCR flows, VLM prompts, or
+    any other downstream image workflow.
   </Step>
 </Steps>
 
@@ -36,19 +36,18 @@ It fits cleanly anywhere you need page images instead of PDF bytes:
     Rendering is handled through Rust, `napi-rs`, and PDFium.
   </Card>
   <Card title="Lossless output" href="/docs/quickstart">
-    Each page comes back as a PNG `Buffer` with dimensions and DPI metadata.
+    Each page comes back as an image `Buffer` with dimensions and DPI metadata.
   </Card>
 </Cards>
 
 ## What it intentionally does not do
 
 - no browser runtime support
-- no JPEG or image-encoding choice in v1
 - no document editing, annotation, or extraction APIs
 
-That narrow API keeps the package easy to reason about. You can use the PNG
-output for previews, storage, background jobs, OCR, VLM prompts, or other
-downstream processing without changing how the conversion layer works.
+That narrow API keeps the package easy to reason about. You can use the output
+for previews, storage, background jobs, OCR, VLM prompts, or other downstream
+processing without changing how the conversion layer works.
 
 ## Output shape
 
@@ -58,7 +57,7 @@ Each page is returned as:
 type ConvertedPage = {
   pageIndex: number;
   data: Buffer;
-  mimeType: "image/png";
+  mimeType: "image/png" | "image/jpeg" | "image/webp";
   width: number;
   height: number;
   dpi: number;
@@ -83,7 +82,7 @@ This package makes that conversion step small, explicit, and fast.
     Install the package and understand the native runtime model.
   </Card>
   <Card title="Quickstart" href="/docs/quickstart">
-    Convert a PDF into PNG pages with the real API.
+    Convert a PDF into page images with the real API.
   </Card>
   <Card title="Examples" href="/docs/example-patterns">
     Choose the right recipe for Node, Next.js, and downstream image workflows.

@@ -2,7 +2,12 @@ import { describe, expect, test } from "bun:test";
 import { readFile } from "node:fs/promises";
 import type { ConvertedPage, PdfToImagesErrorCode } from "../dist/index";
 import { convert, PdfToImagesError } from "../dist/index";
-import { fixturePath, parsePngDimensions } from "./helpers";
+import {
+  expectJpegSignature,
+  expectWebpSignature,
+  fixturePath,
+  parsePngDimensions,
+} from "./helpers";
 
 const singlePageFixture = fixturePath("single-page.pdf");
 const multiPageFixture = fixturePath("multi-page.pdf");
@@ -24,12 +29,7 @@ async function expectPdfError(
 function expectPageShape(page: ConvertedPage, pageIndex: number, dpi: number) {
   expect(page.pageIndex).toBe(pageIndex);
   expect(page.dpi).toBe(dpi);
-  expect(page.mimeType).toBe("image/png");
   expect(page.data.byteLength).toBeGreaterThan(8);
-
-  const dimensions = parsePngDimensions(page.data);
-  expect(dimensions.width).toBe(page.width);
-  expect(dimensions.height).toBe(page.height);
 }
 
 describe("@omsimos/pdf-to-images", () => {
@@ -64,6 +64,34 @@ describe("@omsimos/pdf-to-images", () => {
 
     expect(pages).toHaveLength(1);
     expectPageShape(pages[0], 0, 300);
+    expect(pages[0].mimeType).toBe("image/png");
+    const dimensions = parsePngDimensions(pages[0].data);
+    expect(dimensions.width).toBe(pages[0].width);
+    expect(dimensions.height).toBe(pages[0].height);
+  });
+
+  test("supports JPEG output while keeping dimensions and metadata", async () => {
+    const pages = await convert(singlePageFixture, {
+      pages: [0],
+      outputFormat: "jpeg",
+    });
+
+    expect(pages).toHaveLength(1);
+    expectPageShape(pages[0], 0, 300);
+    expect(pages[0].mimeType).toBe("image/jpeg");
+    expectJpegSignature(pages[0].data);
+  });
+
+  test("supports WebP output while keeping dimensions and metadata", async () => {
+    const pages = await convert(singlePageFixture, {
+      pages: [0],
+      outputFormat: "webp",
+    });
+
+    expect(pages).toHaveLength(1);
+    expectPageShape(pages[0], 0, 300);
+    expect(pages[0].mimeType).toBe("image/webp");
+    expectWebpSignature(pages[0].data);
   });
 
   test("supports crop output when the crop is within bounds", async () => {
@@ -86,6 +114,15 @@ describe("@omsimos/pdf-to-images", () => {
     await expectPdfError(
       convert(singlePageFixture, {
         dpi: 0,
+      }),
+      "INVALID_OPTIONS",
+    );
+  });
+
+  test("rejects unsupported output formats", async () => {
+    await expectPdfError(
+      convert(singlePageFixture, {
+        outputFormat: "gif" as never,
       }),
       "INVALID_OPTIONS",
     );

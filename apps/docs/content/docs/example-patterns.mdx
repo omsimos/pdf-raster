@@ -13,7 +13,7 @@ Use this page as an index to the most common ways teams integrate the library.
     Keep conversion server-side and return image payloads safely.
   </Card>
   <Card title="Downstream integrations" href="/docs/examples-ocr-vlm">
-    Pass PNG output into OCR, AI SDK image prompts, or other consumers.
+    Pass rendered page images into OCR, AI SDK image prompts, or other consumers.
   </Card>
 </Cards>
 
@@ -31,9 +31,13 @@ Use this page as an index to the most common ways teams integrate the library.
     Use a server route or route handler. Keep the native package out of client
     bundles.
   </Accordion>
+  <Accordion title="I need smaller preview payloads">
+    Keep PNG as the default when quality matters most. Use WebP or JPEG when
+    you want to shrink response sizes for previews or downstream transport.
+  </Accordion>
   <Accordion title="I want to send pages into another system">
-    Convert first, then pass the PNG output into whatever comes next, whether
-    that is OCR, an image API, a multimodal model, or your own processing
-    pipeline.
+    Convert first, then pass the rendered page images into whatever comes next,
+    whether that is OCR, an image API, a multimodal model, or your own
+    processing pipeline.
   </Accordion>
 </Accordions>

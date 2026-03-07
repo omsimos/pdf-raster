@@ -1,6 +1,6 @@
 export type ConvertInput = string | Buffer | Uint8Array | ArrayBuffer;
 
-export type OutputFormat = "png";
+export type OutputFormat = "jpeg" | "png" | "webp";
 
 export type Crop = {
   x: number;
@@ -21,7 +21,7 @@ export type ConvertOptions = {
 export type ConvertedPage = {
   pageIndex: number;
   data: Buffer;
-  mimeType: "image/png";
+  mimeType: "image/jpeg" | "image/png" | "image/webp";
   width: number;
   height: number;
   dpi: number;

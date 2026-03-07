@@ -30,3 +30,28 @@ export function parsePngDimensions(data: Uint8Array): {
     height: png.readUInt32BE(20),
   };
 }
+
+export function expectJpegSignature(data: Uint8Array): void {
+  const jpeg = Buffer.from(data);
+
+  if (
+    jpeg.byteLength < 3 ||
+    jpeg[0] !== 0xff ||
+    jpeg[1] !== 0xd8 ||
+    jpeg[2] !== 0xff
+  ) {
+    throw new Error("Expected a JPEG signature.");
+  }
+}
+
+export function expectWebpSignature(data: Uint8Array): void {
+  const webp = Buffer.from(data);
+
+  if (
+    webp.byteLength < 12 ||
+    webp.subarray(0, 4).toString("ascii") !== "RIFF" ||
+    webp.subarray(8, 12).toString("ascii") !== "WEBP"
+  ) {
+    throw new Error("Expected a WebP signature.");
+  }
+}

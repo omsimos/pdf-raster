@@ -52,8 +52,8 @@ function convert(
       default: "300",
     },
     outputFormat: {
-      type: '"png"',
-      description: "Output format. PNG is the only supported value in v1.",
+      type: '"png" | "jpeg" | "webp"',
+      description: "Output format. PNG is the default.",
       required: false,
       default: '"png"',
     },
@@ -93,11 +93,11 @@ function convert(
     },
     data: {
       type: "Buffer",
-      description: "PNG image bytes for the rendered page.",
+      description: "Encoded image bytes for the rendered page.",
       required: true,
     },
     mimeType: {
-      type: '"image/png"',
+      type: '"image/png" | "image/jpeg" | "image/webp"',
       description: "MIME type of the returned image buffer.",
       required: true,
     },

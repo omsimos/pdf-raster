@@ -15,7 +15,7 @@ type ProcessReport = {
 type NativeConvertOptions = {
   pages?: number[];
   dpi?: number;
-  outputFormat?: "png";
+  outputFormat?: "jpeg" | "png" | "webp";
   password?: string;
   crop?: {
     x: number;

@@ -1,0 +1,94 @@
+---
+title: Local development
+description: Prepare PDFium, build the native package, and validate the local development setup in this monorepo.
+---
+
+Use this page if you are working on `@omsimos/pdf-to-images` itself inside the
+monorepo. If you only want to install and use the package, start with
+[Installation](/docs/installation).
+
+## Local development flow
+
+<Steps>
+  <Step>
+    Download or refresh the local PDFium cache:
+
+```bash
+bun run pdfium:download
+```
+
+  </Step>
+  <Step>
+    Build the native package:
+
+```bash
+bun run --filter @omsimos/pdf-to-images build
+```
+
+  </Step>
+  <Step>
+    Run the package tests to validate the local native path:
+
+```bash
+bun run --filter @omsimos/pdf-to-images test
+```
+
+  </Step>
+</Steps>
+
+## Environment notes
+
+<TypeTable
+  type={{
+    PDFIUM_LIB_PATH: {
+      type: "string",
+      description:
+        "Optional explicit path to a local PDFium shared library.",
+      required: false,
+    },
+    PDFIUM_CACHE_DIR: {
+      type: "string",
+      description:
+        "Optional override for the repo-local PDFium cache directory.",
+      required: false,
+    },
+    PDFIUM_RELEASE: {
+      type: "string",
+      description:
+        "Optional release selector for the cached or downloaded PDFium binary.",
+      required: false,
+      default: '"latest"',
+    },
+  }}
+/>
+
+## Typical commands
+
+<Files>
+  <File name="bun run pdfium:download" />
+  <File name="bun run --filter @omsimos/pdf-to-images build" />
+  <File name="bun run --filter @omsimos/pdf-to-images test" />
+</Files>
+
+## If the native setup breaks
+
+<Steps>
+  <Step>
+    Make sure the package is built for the current platform.
+  </Step>
+  <Step>
+    Refresh the local PDFium cache with `bun run pdfium:download`.
+  </Step>
+  <Step>
+    Rebuild the package with `bun run --filter @omsimos/pdf-to-images build`.
+  </Step>
+  <Step>
+    Run `bun run --filter @omsimos/pdf-to-images test` to validate the native
+    path.
+  </Step>
+</Steps>
+
+## Read next
+
+- [Runtime and environment](/docs/runtime-and-environment)
+- [Errors and troubleshooting](/docs/errors-and-troubleshooting)

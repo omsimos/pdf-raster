@@ -1,6 +1,6 @@
 ---
 title: Quickstart
-description: Convert PDFs into PNG pages from a file path or an in-memory buffer.
+description: Convert PDFs into page images from a file path or an in-memory buffer.
 ---
 
 `convert()` is the only public entrypoint you need to learn first.
@@ -15,17 +15,47 @@ const pages = await convert("./report.pdf");
 for (const page of pages) {
   console.log({
     pageIndex: page.pageIndex,
+    outputFormat: page.mimeType,
     width: page.width,
     height: page.height,
     dpi: page.dpi,
-    mimeType: page.mimeType,
   });
 }
 ```
 
 <Callout type="info" title="Default behavior">
-  If `pages` is omitted, the full document is rendered.
+  If `pages` is omitted, the full document is rendered. If `outputFormat` is
+  omitted, the output defaults to PNG.
 </Callout>
+
+## What one page looks like
+
+Each item in `pages` is a complete rendered image result:
+
+```ts
+const [page] = await convert("./report.pdf");
+
+console.log({
+  pageIndex: page.pageIndex,
+  mimeType: page.mimeType,
+  width: page.width,
+  height: page.height,
+  dpi: page.dpi,
+  bytes: page.data.byteLength,
+});
+
+// {
+//   pageIndex: 0,
+//   mimeType: "image/png",
+//   width: 833,
+//   height: 417,
+//   dpi: 300,
+//   bytes: 14032
+// }
+```
+
+The actual image bytes are in `page.data`, so you can write them to disk,
+return them from an API, or pass them into another service directly.
 
 ## Convert selected pages
 
@@ -40,9 +70,24 @@ const pages = await convert("./report.pdf", {
 });
 ```
 
+## Choose an output format
+
+PNG is the default, but you can request another encoded format when needed:
+
+```ts
+import { convert } from "@omsimos/pdf-to-images";
+
+const pages = await convert("./report.pdf", {
+  outputFormat: "webp",
+});
+
+console.log(pages[0].mimeType);
+// "image/webp"
+```
+
 ## Convert from an in-memory buffer
 
-<CodeBlockTabs>
+<CodeBlockTabs defaultValue="path">
   <CodeBlockTabsList>
     <CodeBlockTabsTrigger value="path">File path</CodeBlockTabsTrigger>
     <CodeBlockTabsTrigger value="buffer">In-memory buffer</CodeBlockTabsTrigger>
@@ -78,7 +123,7 @@ const pages = await convert(bytes, {
 Every page includes:
 
 - `pageIndex`
-- `data` as a PNG `Buffer`
+- `data` as an encoded image `Buffer`
 - `mimeType`
 - `width`
 - `height`
@@ -98,7 +143,7 @@ These values are enough to:
     The API uses JavaScript-style zero-based indices because `pages` is an
     array of page indices, not human-readable page labels.
   </Accordion>
-  <Accordion title="Why does the library return PNG buffers instead of file paths?">
+  <Accordion title="Why does the library return image buffers instead of file paths?">
     Returning bytes keeps the package flexible for APIs, workers, storage, and
     other downstream consumers without forcing filesystem writes.
   </Accordion>

@@ -1,19 +1,27 @@
 ---
 title: Installation
-description: Install the package, understand the native runtime model, and prepare local development.
+description: Install the package and understand what gets pulled in at runtime.
 ---
 
 ## Install the package
 
-<CodeBlockTabs>
+<CodeBlockTabs defaultValue="bun">
   <CodeBlockTabsList>
-    <CodeBlockTabsTrigger value="bun">Bun</CodeBlockTabsTrigger>
+    <CodeBlockTabsTrigger value="bun">bun</CodeBlockTabsTrigger>
+    <CodeBlockTabsTrigger value="pnpm">pnpm</CodeBlockTabsTrigger>
     <CodeBlockTabsTrigger value="npm">npm</CodeBlockTabsTrigger>
   </CodeBlockTabsList>
   <CodeBlockTab value="bun">
 
 ```bash
 bun add @omsimos/pdf-to-images
+```
+
+  </CodeBlockTab>
+  <CodeBlockTab value="pnpm">
+
+```bash
+pnpm add @omsimos/pdf-to-images
 ```
 
   </CodeBlockTab>
@@ -37,7 +45,7 @@ The library is native and server-side:
 
 - supported runtimes: Node.js and Bun
 - rendering backend: PDFium
-- primary output: PNG `Buffer`s for each page
+- primary output: image `Buffer`s for each page
 
 Use it in:
 
@@ -46,46 +54,19 @@ Use it in:
 - worker processes
 - document-processing services
 
-## Local development in this monorepo
+## What the package contains
 
-<Steps>
-  <Step>
-    Prefetch the current platform's PDFium binary.
+Installing `@omsimos/pdf-to-images` gives you:
 
-```bash
-bun run pdfium:download
-```
+- the JavaScript API
+- a native `.node` binding for the current platform
+- the matching PDFium shared library used for rendering
 
-  </Step>
-  <Step>
-    Build the native package.
-
-```bash
-bun run --filter @omsimos/pdf-to-images build
-```
-
-  </Step>
-  <Step>
-    Run the package tests if you want to validate the local native setup.
-
-```bash
-bun run --filter @omsimos/pdf-to-images test
-```
-
-  </Step>
-</Steps>
-
-## What gets installed
-
-<Files>
-  <File name="@omsimos/pdf-to-images" />
-  <File name="native .node binding" />
-  <File name="platform PDFium library" />
-</Files>
-
-The goal is a thin JavaScript surface with native rendering under the hood.
+The goal is still a thin JavaScript surface with native rendering under the
+hood.
 
 ## Read next
 
 - [Quickstart](/docs/quickstart)
 - [Runtime and environment](/docs/runtime-and-environment)
+- [Local development](/docs/local-development)

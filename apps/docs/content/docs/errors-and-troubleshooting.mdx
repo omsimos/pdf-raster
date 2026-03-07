@@ -22,8 +22,8 @@ That lets you distinguish:
     a non-negative integer. Remember that page indices are zero-based.
   </Accordion>
   <Accordion title="I got INVALID_OPTIONS">
-    Check `dpi`, `pages`, and `outputFormat`. In v1, only PNG output is
-    supported.
+    Check `dpi`, `pages`, and `outputFormat`. Supported output formats are
+    `png`, `jpeg`, and `webp`.
   </Accordion>
   <Accordion title="I got MALFORMED_PDF">
     PDFium could not parse the file. This usually means the uploaded bytes are
@@ -42,24 +42,6 @@ That lets you distinguish:
     setup.
   </Accordion>
 </Accordions>
-
-## Troubleshooting checklist
-
-<Steps>
-  <Step>
-    Make sure the package is built for the current platform.
-  </Step>
-  <Step>
-    Refresh the local PDFium cache with `bun run pdfium:download`.
-  </Step>
-  <Step>
-    Rebuild the package with `bun run --filter @omsimos/pdf-to-images build`.
-  </Step>
-  <Step>
-    Run `bun run --filter @omsimos/pdf-to-images test` to validate the native
-    path.
-  </Step>
-</Steps>
 
 ## Production guidance
 

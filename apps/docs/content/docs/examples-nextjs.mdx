@@ -22,35 +22,56 @@ description: Use the package inside a Node.js route handler and return image dat
 
 ```ts
 import { NextResponse } from "next/server";
-import { convert } from "@omsimos/pdf-to-images";
+import { convert, PdfToImagesError } from "@omsimos/pdf-to-images";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  const formData = await request.formData();
-  const upload = formData.get("file");
+  try {
+    const formData = await request.formData();
+    const upload = formData.get("file");
+    const isPdf =
+      upload instanceof File &&
+      (upload.type === "application/pdf" ||
+        upload.name.toLowerCase().endsWith(".pdf"));
 
-  if (!(upload instanceof File)) {
+    if (!isPdf || !(upload instanceof File)) {
+      return NextResponse.json(
+        { code: "INVALID_INPUT", message: "Missing PDF upload." },
+        { status: 400 },
+      );
+    }
+
+    const bytes = Buffer.from(await upload.arrayBuffer());
+    const pages = await convert(bytes, {
+      pages: [0],
+      outputFormat: "webp",
+      dpi: 300,
+    });
+
+    return NextResponse.json({
+      pages: pages.map((page) => ({
+        pageIndex: page.pageIndex,
+        width: page.width,
+        height: page.height,
+        dpi: page.dpi,
+        mimeType: page.mimeType,
+        src: `data:${page.mimeType};base64,${page.data.toString("base64")}`,
+      })),
+    });
+  } catch (error) {
+    if (error instanceof PdfToImagesError) {
+      return NextResponse.json(
+        { code: error.code, message: error.message },
+        { status: 400 },
+      );
+    }
+
     return NextResponse.json(
-      { code: "INVALID_INPUT", message: "Missing PDF upload." },
-      { status: 400 },
+      { code: "RENDER_ERROR", message: "Unexpected conversion failure." },
+      { status: 500 },
     );
   }
-
-  const bytes = Buffer.from(await upload.arrayBuffer());
-  const pages = await convert(bytes, {
-    dpi: 300,
-  });
-
-  return NextResponse.json({
-    pages: pages.map((page) => ({
-      pageIndex: page.pageIndex,
-      width: page.width,
-      height: page.height,
-      dpi: page.dpi,
-      src: `data:${page.mimeType};base64,${page.data.toString("base64")}`,
-    })),
-  });
 }
 ```
 
@@ -60,3 +81,10 @@ export async function POST(request: Request) {
 - accepts uploads directly
 - can normalize errors into stable API responses
 - lets the client render previews without touching PDFium directly
+
+<Callout type="info" title="Use data URLs for small previews">
+  Returning `data:` URLs is convenient for demos and document previews. For
+  larger jobs, it is usually better to return file handles, object-storage URLs,
+  or another server-side reference instead of base64-encoding every page into
+  JSON.
+</Callout>

@@ -1,10 +1,15 @@
 ---
 title: OCR and VLM examples
-description: Pass converted PNG pages into OCR engines or multimodal SDKs.
+description: Pass converted page images into OCR engines or multimodal SDKs.
 ---
 
-These examples show how to pass converted PNG pages into OCR and multimodal
+These examples show how to pass converted page images into OCR and multimodal
 tools after rendering.
+
+<Callout type="info" title="Choose a format for the downstream tool">
+  PNG is the safest default. Use WebP or JPEG if you want smaller payloads and
+  the downstream tool accepts those formats.
+</Callout>
 
 ## Tesseract.js
 
@@ -21,6 +26,9 @@ const [page] = await convert("./scan.pdf", {
 const result = await worker.recognize(page.data);
 console.log(result.data.text);
 ```
+
+`page.data` is already an encoded image buffer, so it can be passed directly
+into OCR libraries that accept image bytes.
 
 ## AI SDK `generateText`
 
@@ -48,9 +56,12 @@ const { text } = await generateText({
 });
 ```
 
+The same pattern works for other image-capable SDKs: convert first, then pass
+`page.data` and `page.mimeType` into the next system.
+
 ## Why the handoff is simple
 
-The PNG page result is already shaped for downstream use:
+The converted page result is already shaped for downstream use:
 
 - `page.data` is the image payload
 - `page.mimeType` tells the consumer what it is
