@@ -45,7 +45,6 @@
     "build:types": "tsc -p tsconfig.json",
     "build:native": "napi build --platform --release",
     "build:native:debug": "napi build --platform",
-    "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
     "prepublishOnly": "bun run build && napi prepublish -t npm"
   },
@@ -60,10 +59,8 @@
   ],
   "devDependencies": {
     "@napi-rs/cli": "^3.4.0",
-    "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
     "@types/node": "^22.15.3",
-    "eslint": "^9.39.1",
     "typescript": "5.9.2"
   }
 }

@@ -40,7 +40,11 @@ export type PdfToImagesErrorCode =
 export class PdfToImagesError extends Error {
   code: PdfToImagesErrorCode;
 
-  constructor(code: PdfToImagesErrorCode, message: string, options?: ErrorOptions) {
+  constructor(
+    code: PdfToImagesErrorCode,
+    message: string,
+    options?: ErrorOptions,
+  ) {
     super(message, options);
     this.name = "PdfToImagesError";
     this.code = code;

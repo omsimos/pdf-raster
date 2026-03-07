@@ -1,5 +1,5 @@
-import { createRequire } from "node:module";
 import { existsSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -27,8 +27,16 @@ type NativeConvertOptions = {
 };
 
 type NativeBinding = {
-  convertPath(path: string, options?: NativeConvertOptions, pdfiumLibraryPath?: string): Promise<ConvertedPage[]>;
-  convertBytes(bytes: Buffer, options?: NativeConvertOptions, pdfiumLibraryPath?: string): Promise<ConvertedPage[]>;
+  convertPath(
+    path: string,
+    options?: NativeConvertOptions,
+    pdfiumLibraryPath?: string,
+  ): Promise<ConvertedPage[]>;
+  convertBytes(
+    bytes: Buffer,
+    options?: NativeConvertOptions,
+    pdfiumLibraryPath?: string,
+  ): Promise<ConvertedPage[]>;
 };
 
 const require = createRequire(import.meta.url);
@@ -42,7 +50,9 @@ function isMusl(): boolean {
   }
 
   try {
-    return require("node:fs").readFileSync("/usr/bin/ldd", "utf8").includes("musl");
+    return require("node:fs")
+      .readFileSync("/usr/bin/ldd", "utf8")
+      .includes("musl");
   } catch {
     try {
       const report = process.report?.getReport?.() as ProcessReport | undefined;
@@ -50,7 +60,10 @@ function isMusl(): boolean {
         return false;
       }
 
-      return report?.sharedObjects?.some((file: string) => file.includes("musl")) ?? false;
+      return (
+        report?.sharedObjects?.some((file: string) => file.includes("musl")) ??
+        false
+      );
     } catch {
       return false;
     }
@@ -64,10 +77,19 @@ function ensureBundledPdfiumPath(): void {
 
   const candidates =
     process.platform === "win32"
-      ? [join(packageRoot, "pdfium.dll"), join(packageRoot, "bin", "pdfium.dll")]
+      ? [
+          join(packageRoot, "pdfium.dll"),
+          join(packageRoot, "bin", "pdfium.dll"),
+        ]
       : process.platform === "darwin"
-        ? [join(packageRoot, "libpdfium.dylib"), join(packageRoot, "lib", "libpdfium.dylib")]
-        : [join(packageRoot, "libpdfium.so"), join(packageRoot, "lib", "libpdfium.so")];
+        ? [
+            join(packageRoot, "libpdfium.dylib"),
+            join(packageRoot, "lib", "libpdfium.dylib"),
+          ]
+        : [
+            join(packageRoot, "libpdfium.so"),
+            join(packageRoot, "lib", "libpdfium.so"),
+          ];
 
   const bundled = candidates.find((candidate) => existsSync(candidate));
   if (bundled) {
@@ -78,10 +100,19 @@ function ensureBundledPdfiumPath(): void {
 function getBundledPdfiumPath(): string | undefined {
   const candidates =
     process.platform === "win32"
-      ? [join(packageRoot, "pdfium.dll"), join(packageRoot, "bin", "pdfium.dll")]
+      ? [
+          join(packageRoot, "pdfium.dll"),
+          join(packageRoot, "bin", "pdfium.dll"),
+        ]
       : process.platform === "darwin"
-        ? [join(packageRoot, "libpdfium.dylib"), join(packageRoot, "lib", "libpdfium.dylib")]
-        : [join(packageRoot, "libpdfium.so"), join(packageRoot, "lib", "libpdfium.so")];
+        ? [
+            join(packageRoot, "libpdfium.dylib"),
+            join(packageRoot, "lib", "libpdfium.dylib"),
+          ]
+        : [
+            join(packageRoot, "libpdfium.so"),
+            join(packageRoot, "lib", "libpdfium.so"),
+          ];
 
   return candidates.find((candidate) => existsSync(candidate));
 }
@@ -135,16 +166,24 @@ function loadNativeBinding(): NativeBinding {
   if (process.platform === "linux") {
     if (process.arch === "arm64") {
       return (
-        requireLocal(`pdf-to-images.linux-arm64-${isMusl() ? "musl" : "gnu"}.node`) ??
-        requirePackage(`@omsimos/pdf-to-images-linux-arm64-${isMusl() ? "musl" : "gnu"}`) ??
+        requireLocal(
+          `pdf-to-images.linux-arm64-${isMusl() ? "musl" : "gnu"}.node`,
+        ) ??
+        requirePackage(
+          `@omsimos/pdf-to-images-linux-arm64-${isMusl() ? "musl" : "gnu"}`,
+        ) ??
         failToLoad()
       );
     }
 
     if (process.arch === "x64") {
       return (
-        requireLocal(`pdf-to-images.linux-x64-${isMusl() ? "musl" : "gnu"}.node`) ??
-        requirePackage(`@omsimos/pdf-to-images-linux-x64-${isMusl() ? "musl" : "gnu"}`) ??
+        requireLocal(
+          `pdf-to-images.linux-x64-${isMusl() ? "musl" : "gnu"}.node`,
+        ) ??
+        requirePackage(
+          `@omsimos/pdf-to-images-linux-x64-${isMusl() ? "musl" : "gnu"}`,
+        ) ??
         failToLoad()
       );
     }

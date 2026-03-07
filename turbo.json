@@ -3,6 +3,10 @@
   "ui": "tui",
   "globalEnv": ["PDFIUM_LIB_PATH", "NAPI_RS_NATIVE_LIBRARY_PATH"],
   "tasks": {
+    "//#format-and-lint": {},
+    "//#format-and-lint:fix": {
+      "cache": false
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
@@ -15,9 +19,6 @@
         "*.dylib",
         "*.dll"
       ]
-    },
-    "lint": {
-      "dependsOn": ["^lint"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
