@@ -1,9 +1,7 @@
 "use client";
 
-import { Badge } from "@omsimos/ui/components/badge";
-import { Button } from "@omsimos/ui/components/button";
-import { Input } from "@omsimos/ui/components/input";
 import Image from "next/image";
+import type { ReactElement } from "react";
 import { useRef, useState, useTransition } from "react";
 
 import {
@@ -13,6 +11,9 @@ import {
   MAX_SELECTED_PAGES,
   type SupportedDpi,
 } from "@/app/lib/demo-config";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type ConvertedPreviewPage = {
   pageIndex: number;
@@ -73,7 +74,7 @@ function formatFileSize(bytes: number) {
   return `${value.toFixed(value >= 100 ? 0 : 1)} ${units[unitIndex]}`;
 }
 
-export function ConversionWorkbench() {
+export function ConversionWorkbench(): ReactElement {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [pagesInput, setPagesInput] = useState(DEFAULT_PAGE_INPUT);
   const [dpi, setDpi] = useState<SupportedDpi>(DEFAULT_DPI);

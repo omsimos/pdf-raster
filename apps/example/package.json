@@ -12,11 +12,17 @@
     "ui:add": "bunx --bun shadcn@latest add"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
     "@omsimos/pdf-to-images": "*",
-    "@omsimos/ui": "*",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.542.0",
     "next": "16.1.5",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "shadcn": "^3.4.2",
+    "tailwind-merge": "^3.3.1",
+    "tw-animate-css": "^1.3.8"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import type { ReactElement, ReactNode } from "react";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -20,8 +21,8 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
-}>) {
+  children: ReactNode;
+}>): ReactElement {
   return (
     <html lang="en">
       <body

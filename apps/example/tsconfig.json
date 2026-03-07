@@ -3,9 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@omsimos/ui": ["../../packages/ui/src/index.ts"],
-      "@omsimos/ui/*": ["../../packages/ui/src/*"]
+      "@/*": ["./*"]
     },
     "plugins": [
       {

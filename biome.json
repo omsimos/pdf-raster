@@ -17,7 +17,6 @@
       "!**/build",
       "!**/out",
       "!**/node_modules",
-      "!packages/ui/src/components",
       "!**/target",
       "!**/*.node",
       "!**/*.dll",
