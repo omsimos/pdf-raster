@@ -1,165 +1,142 @@
-# Turborepo starter
+# `@omsimos/pdf-to-images`
 
-This Turborepo starter is maintained by the Turborepo core team.
+Native PDF-to-images conversion for Node.js and Bun.
 
-## Using this example
+`@omsimos/pdf-to-images` renders PDF pages into encoded image buffers with a
+small server-side API. Use it for page previews, document pipelines, API
+uploads, OCR handoff, VLM input, or any workflow that needs page images instead
+of raw PDF bytes.
 
-Run the following command:
+## Features
 
-```sh
-npx create-turbo@latest
+- Native rendering with Rust, `napi-rs`, and PDFium
+- One public API: `convert(input, options?)`
+- File path and in-memory PDF input support
+- Multi-page conversion in a single call
+- Encoded image output with `png` default and `jpeg` / `webp` support
+- Works in Node.js and Bun on supported server platforms
+
+## Install
+
+```bash
+bun add @omsimos/pdf-to-images
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `example`: a [Next.js](https://nextjs.org/) app that demonstrates `@omsimos/pdf-to-images`
-- `@omsimos/ui`: a shared React component library for both `example` and `docs`
-- `@omsimos/pdf-to-images`: a native PDF-to-images package for Node.js and Bun
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [Biome](https://biomejs.dev/) for linting and formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```bash
+pnpm add @omsimos/pdf-to-images
 ```
 
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+```bash
+npm install @omsimos/pdf-to-images
 ```
 
-If you need to prefetch the current platform's PDFium binary into the local
-cache before building the native package, run:
+## Quick usage
 
-```sh
+```ts
+import { convert } from "@omsimos/pdf-to-images";
+
+const [page] = await convert("./report.pdf", {
+  pages: [0],
+});
+
+console.log({
+  pageIndex: page.pageIndex,
+  mimeType: page.mimeType,
+  width: page.width,
+  height: page.height,
+  dpi: page.dpi,
+});
+
+// page.data is the encoded image buffer
+```
+
+Each returned page looks like:
+
+```ts
+type ConvertedPage = {
+  pageIndex: number;
+  data: Buffer;
+  mimeType: "image/png" | "image/jpeg" | "image/webp";
+  width: number;
+  height: number;
+  dpi: number;
+};
+```
+
+## Output formats
+
+- Default: `png`
+- Supported: `png`, `jpeg`, `webp`
+
+Example:
+
+```ts
+const pages = await convert("./report.pdf", {
+  outputFormat: "webp",
+});
+
+console.log(pages[0].mimeType);
+// "image/webp"
+```
+
+## Supported runtimes and platforms
+
+Server-side only:
+
+- Node.js
+- Bun
+
+Current target matrix:
+
+- macOS x64 / arm64
+- Linux x64 / arm64 (`gnu`)
+- Windows x64 / arm64
+
+Do not import this package into browser bundles, React client components, or
+Edge runtimes.
+
+## Common uses
+
+- Generate page previews from uploaded PDFs
+- Feed OCR or VLM pipelines with rendered page images
+- Convert PDFs inside API routes, workers, or batch jobs
+- Process documents from object storage, queues, or other backend systems
+
+## Examples
+
+- Basic server-side usage: see [`apps/docs/content/docs/quickstart.mdx`](./apps/docs/content/docs/quickstart.mdx)
+- Node.js examples: see [`apps/docs/content/docs/examples-node.mdx`](./apps/docs/content/docs/examples-node.mdx)
+- Next.js route handler example: see [`apps/docs/content/docs/examples-nextjs.mdx`](./apps/docs/content/docs/examples-nextjs.mdx)
+- OCR / VLM handoff examples: see [`apps/docs/content/docs/examples-ocr-vlm.mdx`](./apps/docs/content/docs/examples-ocr-vlm.mdx)
+
+If you want the full documentation set, see [`apps/docs`](./apps/docs) in this
+repository.
+
+The repo also includes:
+
+- [`apps/example`](./apps/example): interactive demo app using `@omsimos/pdf-to-images`
+- [`apps/docs`](./apps/docs): Fumadocs-based documentation app
+
+## Local development
+
+This repository is a Bun + Turborepo monorepo with a Rust + `napi-rs` native
+package backed by PDFium.
+
+Common commands:
+
+```bash
+bun install
 bun run pdfium:download
+bun run dev
+bun run build
+bun run test
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Apps:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+- `example`: local demo app
+- `docs`: documentation site
 
-```sh
-turbo build --filter=docs
-```
+## License
 
-Without global `turbo`:
-
-```sh
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=example
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=example
-yarn exec turbo dev --filter=example
-pnpm exec turbo dev --filter=example
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+MIT
