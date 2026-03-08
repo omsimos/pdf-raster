@@ -1,5 +1,5 @@
 ---
-"@omsimos/pdf-to-images": patch
+"@omsimos/pdf-raster": patch
 ---
 
 Set up Changesets and GitHub Actions release publishing for npm, including
