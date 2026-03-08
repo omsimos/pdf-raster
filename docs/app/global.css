@@ -1,3 +1,110 @@
 @import "tailwindcss";
 @import "fumadocs-ui/css/solar.css";
 @import "fumadocs-ui/css/preset.css";
+
+:root {
+  --docs-lab-accent: #eb5e28;
+  --docs-lab-accent-soft: rgb(235 94 40 / 0.12);
+}
+
+@layer base {
+  body {
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .docs-lab-grid {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .docs-lab-grid::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--fd-border) 55%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--fd-border) 55%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 42px 42px;
+    mask-image: radial-gradient(circle at center, black 40%, transparent 92%);
+    opacity: 0.34;
+  }
+
+  .docs-lab-shell {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--fd-border) 82%, transparent);
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--fd-card) 92%, white 8%),
+      color-mix(in srgb, var(--fd-card) 98%, transparent) 45%,
+      color-mix(in srgb, var(--fd-card) 88%, var(--docs-lab-accent-soft) 12%)
+    );
+    box-shadow:
+      0 24px 56px rgb(15 23 42 / 0.09),
+      inset 0 1px 0 rgb(255 255 255 / 0.08);
+    backdrop-filter: blur(14px);
+  }
+
+  .dark .docs-lab-shell {
+    box-shadow:
+      0 24px 56px rgb(2 6 23 / 0.35),
+      inset 0 1px 0 rgb(255 255 255 / 0.03);
+  }
+
+  .docs-lab-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      135deg,
+      rgb(255 255 255 / 0.16),
+      transparent 28%,
+      transparent 72%,
+      rgb(15 23 42 / 0.04)
+    );
+  }
+
+  .docs-lab-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--fd-muted-foreground) 88%, transparent);
+  }
+
+  .docs-lab-kicker {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--docs-lab-accent);
+  }
+
+  .docs-lab-rule {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--fd-border) 90%, transparent) 18%,
+      color-mix(in srgb, var(--fd-border) 90%, transparent) 82%,
+      transparent
+    );
+  }
+
+  .docs-lab-stat {
+    border: 1px solid color-mix(in srgb, var(--fd-border) 82%, transparent);
+    background: color-mix(in srgb, var(--fd-card) 92%, transparent);
+  }
+}

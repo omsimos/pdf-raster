@@ -1,69 +1,158 @@
 import Link from "next/link";
 
+import { benchmarkSummary } from "@/lib/benchmark";
+
+const valuePanels = [
+  {
+    kicker: "Native",
+    title: "Rust + PDFium under a small JS API",
+    body: "Use one server-side package surface while keeping rendering native and fast.",
+  },
+  {
+    kicker: "Formats",
+    title: "PNG by default, JPEG and WebP when needed",
+    body: "Choose the output format that fits preview delivery, storage, or downstream image transport.",
+  },
+  {
+    kicker: "Usage",
+    title: "Built for backend document workflows",
+    body: "Use it in route handlers, batch jobs, queues, OCR pipelines, preview services, or multimodal ingestion.",
+  },
+];
+
 export default function HomePage() {
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 items-center px-6 py-16 md:px-10">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.3fr)_320px] lg:items-start">
-        <section className="space-y-6">
-          <p className="text-sm font-medium text-fd-muted-foreground">
-            omsimos / native pdf rasterization
-          </p>
-          <div className="space-y-4">
-            <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
-              Documentation for @omsimos/pdf-to-images
-            </h1>
-            <p className="max-w-2xl text-lg text-fd-muted-foreground">
-              Convert PDFs into page images with a small native API. This site
-              covers installation, the `convert()` API, and practical usage
-              patterns for backend and document workflows.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/docs"
-              className="inline-flex items-center rounded-md bg-fd-primary px-4 py-2 text-sm font-medium text-fd-primary-foreground"
-            >
-              Open docs
-            </Link>
-            <Link
-              href="https://github.com/omsimos/pdf-to-images"
-              className="inline-flex items-center rounded-md border border-fd-border px-4 py-2 text-sm font-medium text-fd-foreground"
-            >
-              GitHub repo
-            </Link>
+    <main className="docs-lab-grid mx-auto flex w-full max-w-7xl flex-1 px-4 py-10 md:px-6 md:py-14">
+      <div className="relative z-10 grid w-full gap-5 xl:grid-cols-[minmax(0,1.2fr)_380px]">
+        <section className="docs-lab-shell rounded-[2rem] p-6 md:p-8">
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="max-w-3xl space-y-4">
+                <p className="docs-lab-kicker">omsimos / documentation</p>
+                <div className="space-y-3">
+                  <p className="docs-lab-label">Native PDF rasterization</p>
+                  <h1 className="max-w-4xl text-4xl leading-[1.08] font-semibold tracking-[-0.08em] text-fd-foreground md:text-6xl md:leading-[1.02]">
+                    Documentation for a fast, minimal PDF-to-images primitive.
+                  </h1>
+                  <p className="max-w-2xl text-base leading-7 text-fd-muted-foreground md:text-lg">
+                    @omsimos/pdf-to-images is a native PDF-to-images library for
+                    Node.js and Bun. It turns PDFs into encoded page images
+                    through a small server-side API for backend and document
+                    workflows.
+                  </p>
+                </div>
+              </div>
+
+              <div className="docs-lab-stat min-w-[180px] rounded-3xl p-4">
+                <p className="docs-lab-label">Current sample run</p>
+                <p className="mt-3 text-3xl font-semibold tracking-[-0.08em] text-fd-foreground">
+                  {benchmarkSummary.speedupRange}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-fd-muted-foreground">
+                  Faster than the included `pdfjs-dist` canvas backends in the
+                  local benchmark sample.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href="/docs"
+                className="inline-flex items-center rounded-full border border-[var(--docs-lab-accent)] bg-[var(--docs-lab-accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90"
+              >
+                Get started
+              </Link>
+              <Link
+                href="/docs/benchmark"
+                className="inline-flex items-center rounded-full border border-fd-border bg-fd-card px-5 py-2.5 text-sm font-medium text-fd-foreground transition-colors hover:bg-fd-accent hover:text-fd-accent-foreground"
+              >
+                View benchmark
+              </Link>
+              <Link
+                href="https://github.com/omsimos/pdf-to-images"
+                className="inline-flex items-center rounded-full border border-fd-border bg-transparent px-5 py-2.5 text-sm font-medium text-fd-muted-foreground transition-colors hover:border-fd-foreground hover:text-fd-foreground"
+              >
+                GitHub repo
+              </Link>
+            </div>
+
+            <div className="docs-lab-rule" />
+
+            <div className="grid gap-4 lg:grid-cols-3">
+              {valuePanels.map((panel) => (
+                <article
+                  key={panel.title}
+                  className="docs-lab-stat rounded-[1.6rem] p-5"
+                >
+                  <p className="docs-lab-label">{panel.kicker}</p>
+                  <h2 className="mt-3 text-xl font-semibold tracking-[-0.05em] text-fd-foreground">
+                    {panel.title}
+                  </h2>
+                  <p className="mt-3 text-sm leading-6 text-fd-muted-foreground">
+                    {panel.body}
+                  </p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
-        <aside className="rounded-lg border border-fd-border bg-fd-card p-5">
-          <h2 className="text-sm font-semibold text-fd-foreground">
-            Start here
-          </h2>
-          <div className="mt-4 space-y-3 text-sm">
-            <Link
-              href="/docs/installation"
-              className="block rounded-md px-3 py-2 text-fd-foreground hover:bg-fd-accent hover:text-fd-accent-foreground"
-            >
-              Installation
-            </Link>
-            <Link
-              href="/docs/quickstart"
-              className="block rounded-md px-3 py-2 text-fd-foreground hover:bg-fd-accent hover:text-fd-accent-foreground"
-            >
-              Quickstart
-            </Link>
-            <Link
-              href="/docs/api-reference"
-              className="block rounded-md px-3 py-2 text-fd-foreground hover:bg-fd-accent hover:text-fd-accent-foreground"
-            >
-              API reference
-            </Link>
-            <Link
-              href="/docs/examples-ocr-vlm"
-              className="block rounded-md px-3 py-2 text-fd-foreground hover:bg-fd-accent hover:text-fd-accent-foreground"
-            >
-              Integration examples
-            </Link>
-          </div>
+        <aside className="grid gap-5">
+          <section className="docs-lab-shell rounded-[2rem] p-6">
+            <div className="space-y-5">
+              <div>
+                <p className="docs-lab-label">Benchmark snapshot</p>
+                <h2 className="mt-3 text-2xl font-semibold tracking-[-0.06em] text-fd-foreground">
+                  Local results from the included fixture PDFs.
+                </h2>
+              </div>
+
+              <div className="grid gap-3">
+                {benchmarkSummary.metrics.map((metric) => (
+                  <div
+                    key={metric.label}
+                    className="docs-lab-stat rounded-[1.4rem] p-4"
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="docs-lab-label">{metric.label}</p>
+                      <span className="text-sm font-medium text-[var(--docs-lab-accent)]">
+                        {metric.ours}
+                      </span>
+                    </div>
+                    <div className="mt-3 space-y-2 text-sm text-fd-muted-foreground">
+                      <div className="flex items-center justify-between gap-4">
+                        <span>@omsimos/pdf-to-images</span>
+                        <span className="font-medium text-fd-foreground">
+                          {metric.ours}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between gap-4">
+                        <span>pdfjs-dist + @napi-rs/canvas</span>
+                        <span>{metric.napi}</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-4">
+                        <span>pdfjs-dist + node-canvas</span>
+                        <span>{metric.nodeCanvas}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-sm leading-6 text-fd-muted-foreground">
+                These are sample local results from the same benchmark output
+                shown in the README. Use the full benchmark page for the command
+                shape, caveats, and raw output.
+              </p>
+
+              <Link
+                href="/docs/benchmark"
+                className="inline-flex items-center rounded-full border border-fd-border px-4 py-2 text-sm font-medium text-fd-foreground transition-colors hover:border-[var(--docs-lab-accent)] hover:bg-[color:var(--docs-lab-accent-soft)]"
+              >
+                Read benchmark details
+              </Link>
+            </div>
+          </section>
         </aside>
       </div>
     </main>
