@@ -1,0 +1,19 @@
+{
+  "name": "benchmark",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "benchmark": "bun run ./index.ts",
+    "check-types": "tsc --noEmit",
+    "clean": "node ../scripts/clean.mjs .turbo"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.80",
+    "@omsimos/pdf-to-images": "*",
+    "pdfjs-dist": "^5.4.149"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "typescript": "5.9.2"
+  }
+}

@@ -2,6 +2,7 @@
   "name": "pdf-to-images",
   "private": true,
   "scripts": {
+    "benchmark": "bun run --cwd benchmark benchmark",
     "build": "turbo run build",
     "clean": "turbo run clean",
     "changeset": "changeset",
@@ -28,6 +29,7 @@
   },
   "packageManager": "bun@1.3.9",
   "workspaces": [
+    "benchmark",
     "docs",
     "example",
     "core"
