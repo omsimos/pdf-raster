@@ -55,6 +55,16 @@ struct ConvertRequest {
   pdfium_library_path: Option<String>,
 }
 
+#[derive(Debug)]
+struct ResolvedConvertOptions {
+  pages: Option<Vec<u32>>,
+  dpi: u32,
+  output_format: OutputFormat,
+  password: Option<String>,
+  crop: Option<NativeCrop>,
+  render_annotations: bool,
+}
+
 #[derive(Clone, Copy, Debug)]
 enum OutputFormat {
   Jpeg,
@@ -194,7 +204,7 @@ fn bind_pdfium(pdfium_library_path: Option<&str>) -> std::result::Result<Box<dyn
   Pdfium::bind_to_system_library()
 }
 
-fn normalize_options(options: NativeConvertOptions) -> std::result::Result<NativeConvertOptions, ConvertError> {
+fn normalize_options(options: NativeConvertOptions) -> std::result::Result<ResolvedConvertOptions, ConvertError> {
   let output_format = OutputFormat::from_option(options.output_format.as_deref())?;
 
   if let Some(dpi) = options.dpi {
@@ -206,10 +216,25 @@ fn normalize_options(options: NativeConvertOptions) -> std::result::Result<Nativ
     }
   }
 
-  Ok(NativeConvertOptions {
-    output_format: Some(output_format.as_str().to_owned()),
-    ..options
+  Ok(ResolvedConvertOptions {
+    pages: options.pages,
+    dpi: options.dpi.unwrap_or(300),
+    output_format,
+    password: options.password,
+    crop: options.crop,
+    render_annotations: options.render_annotations.unwrap_or(true),
   })
+}
+
+fn default_native_options() -> NativeConvertOptions {
+  NativeConvertOptions {
+    pages: None,
+    dpi: None,
+    output_format: None,
+    password: None,
+    crop: None,
+    render_annotations: None,
+  }
 }
 
 fn resolve_page_indices(page_count: usize, pages: Option<Vec<u32>>) -> std::result::Result<Vec<usize>, ConvertError> {
@@ -245,10 +270,14 @@ fn encode_image(image: &DynamicImage, output_format: OutputFormat) -> std::resul
   let mut cursor = Cursor::new(Vec::new());
 
   match output_format {
-    OutputFormat::Jpeg => DynamicImage::ImageRgb8(image.to_rgb8()),
-    OutputFormat::Png | OutputFormat::Webp => image.clone(),
+    OutputFormat::Jpeg => {
+      DynamicImage::ImageRgb8(image.to_rgb8())
+        .write_to(&mut cursor, output_format.image_format())
+    }
+    OutputFormat::Png | OutputFormat::Webp => {
+      image.write_to(&mut cursor, output_format.image_format())
+    }
   }
-  .write_to(&mut cursor, output_format.image_format())
   .map_err(|error| {
     ConvertError::new(
       ErrorCode::RenderError,
@@ -284,10 +313,7 @@ fn crop_image(image: RgbaImage, crop: &NativeCrop) -> std::result::Result<RgbaIm
 
 fn render_pages(request: ConvertRequest) -> std::result::Result<Vec<NativeConvertedPage>, ConvertError> {
   let options = normalize_options(request.options)?;
-  let dpi = options.dpi.unwrap_or(300);
   let password = options.password.as_deref();
-  let render_annotations = options.render_annotations.unwrap_or(true);
-  let output_format = OutputFormat::from_option(options.output_format.as_deref())?;
 
   let pdfium_lock = get_pdfium(request.pdfium_library_path.as_deref())?;
   let pdfium = pdfium_lock.lock().map_err(|_| {
@@ -315,12 +341,12 @@ fn render_pages(request: ConvertRequest) -> std::result::Result<Vec<NativeConver
     })?;
     let page = document.pages().get(page_number).map_err(map_pdfium_error)?;
 
-    let width = points_to_pixels(page.width().value, dpi);
+    let width = points_to_pixels(page.width().value, options.dpi);
     let render_config = PdfRenderConfig::new()
       .set_target_width(i32::from(width))
       .set_clear_color(PdfColor::WHITE)
-      .render_annotations(render_annotations)
-      .render_form_data(render_annotations);
+      .render_annotations(options.render_annotations)
+      .render_form_data(options.render_annotations);
 
     let bitmap = page
       .render_with_config(&render_config)
@@ -333,20 +359,17 @@ fn render_pages(request: ConvertRequest) -> std::result::Result<Vec<NativeConver
     }
 
     let dynamic_image = DynamicImage::ImageRgba8(image);
-    let image_bytes = encode_image(&dynamic_image, output_format)?;
+    let image_bytes = encode_image(&dynamic_image, options.output_format)?;
 
     converted.push(NativeConvertedPage {
       page_index: page_index as u32,
       data: image_bytes.into(),
-      mime_type: output_format.mime_type().to_owned(),
+      mime_type: options.output_format.mime_type().to_owned(),
       width: dynamic_image.width(),
       height: dynamic_image.height(),
-      dpi,
+      dpi: options.dpi,
     });
   }
-
-  drop(document);
-  drop(pdfium);
 
   Ok(converted)
 }
@@ -388,14 +411,7 @@ pub async fn convert_path(
   tokio::task::spawn_blocking(move || {
     render_pages(ConvertRequest {
       input: InputSource::Path(path),
-      options: options.unwrap_or(NativeConvertOptions {
-        pages: None,
-        dpi: None,
-        output_format: None,
-        password: None,
-        crop: None,
-        render_annotations: None,
-      }),
+      options: options.unwrap_or(default_native_options()),
       pdfium_library_path,
     })
   })
@@ -413,14 +429,7 @@ pub async fn convert_bytes(
   tokio::task::spawn_blocking(move || {
     render_pages(ConvertRequest {
       input: InputSource::Bytes(bytes.to_vec()),
-      options: options.unwrap_or(NativeConvertOptions {
-        pages: None,
-        dpi: None,
-        output_format: None,
-        password: None,
-        crop: None,
-        render_annotations: None,
-      }),
+      options: options.unwrap_or(default_native_options()),
       pdfium_library_path,
     })
   })

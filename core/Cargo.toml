@@ -1,5 +1,5 @@
 [package]
-name = "omsimos_pdf_to_images"
+name = "omsimos_pdf_raster"
 version = "0.0.0"
 edition = "2021"
 publish = false

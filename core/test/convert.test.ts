@@ -44,6 +44,30 @@ describe("@omsimos/pdf-raster", () => {
     expect(pages[0].height).toBe(417);
   });
 
+  test("accepts Uint8Array input", async () => {
+    const bytes = new Uint8Array(await readFile(singlePageFixture));
+    const pages = await convert(bytes, {
+      pages: [0],
+    });
+
+    expect(pages).toHaveLength(1);
+    expectPageShape(pages[0], 0, 300);
+  });
+
+  test("accepts ArrayBuffer input", async () => {
+    const bytes = await readFile(singlePageFixture);
+    const arrayBuffer = bytes.buffer.slice(
+      bytes.byteOffset,
+      bytes.byteOffset + bytes.byteLength,
+    );
+    const pages = await convert(arrayBuffer, {
+      pages: [0],
+    });
+
+    expect(pages).toHaveLength(1);
+    expectPageShape(pages[0], 0, 300);
+  });
+
   test("converts selected pages from a file path", async () => {
     const pages = await convert(multiPageFixture, {
       pages: [1],
@@ -68,6 +92,18 @@ describe("@omsimos/pdf-raster", () => {
     const dimensions = parsePngDimensions(pages[0].data);
     expect(dimensions.width).toBe(pages[0].width);
     expect(dimensions.height).toBe(pages[0].height);
+  });
+
+  test("truncates non-integer dpi values during normalization", async () => {
+    const pages = await convert(singlePageFixture, {
+      pages: [0],
+      dpi: 150.9,
+    });
+
+    expect(pages).toHaveLength(1);
+    expectPageShape(pages[0], 0, 150);
+    expect(pages[0].width).toBe(417);
+    expect(pages[0].height).toBe(209);
   });
 
   test("supports JPEG output while keeping dimensions and metadata", async () => {
@@ -101,6 +137,22 @@ describe("@omsimos/pdf-raster", () => {
         y: 20,
         width: 100,
         height: 200,
+      },
+    });
+
+    expect(pages).toHaveLength(1);
+    expectPageShape(pages[0], 0, 300);
+    expect(pages[0].width).toBe(100);
+    expect(pages[0].height).toBe(200);
+  });
+
+  test("truncates non-integer crop values during normalization", async () => {
+    const pages = await convert(singlePageFixture, {
+      crop: {
+        x: 10.9,
+        y: 20.1,
+        width: 100.8,
+        height: 200.4,
       },
     });
 

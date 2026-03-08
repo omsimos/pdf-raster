@@ -4,9 +4,33 @@ import {
   type ConvertInput,
   type ConvertOptions,
   type Crop,
+  type OutputFormat,
   PdfToImagesError,
   type PdfToImagesErrorCode,
 } from "./types.js";
+
+const DEFAULT_OUTPUT_FORMAT: OutputFormat = "png";
+const SUPPORTED_OUTPUT_FORMATS = new Set<OutputFormat>(["jpeg", "png", "webp"]);
+const NATIVE_ERROR_CODES = new Set<PdfToImagesErrorCode>([
+  "INVALID_INPUT",
+  "INVALID_OPTIONS",
+  "INVALID_PAGE_INDEX",
+  "INVALID_CROP",
+  "PASSWORD_ERROR",
+  "MALFORMED_PDF",
+  "PDFIUM_UNAVAILABLE",
+  "RENDER_ERROR",
+]);
+
+function isSupportedOutputFormat(
+  value: string,
+): value is typeof DEFAULT_OUTPUT_FORMAT | "jpeg" | "webp" {
+  return SUPPORTED_OUTPUT_FORMATS.has(value as OutputFormat);
+}
+
+function isNativeErrorCode(value: string): value is PdfToImagesErrorCode {
+  return NATIVE_ERROR_CODES.has(value as PdfToImagesErrorCode);
+}
 
 function normalizeInput(input: ConvertInput): string | Buffer {
   if (typeof input === "string") {
@@ -60,12 +84,7 @@ function normalizeCrop(crop: Crop | undefined): Crop | undefined {
 }
 
 function normalizeOptions(options: ConvertOptions = {}): ConvertOptions {
-  if (
-    options.outputFormat &&
-    options.outputFormat !== "jpeg" &&
-    options.outputFormat !== "png" &&
-    options.outputFormat !== "webp"
-  ) {
+  if (options.outputFormat && !isSupportedOutputFormat(options.outputFormat)) {
     throw new PdfToImagesError(
       "INVALID_OPTIONS",
       "Supported output formats are png, jpeg, and webp.",
@@ -102,7 +121,7 @@ function normalizeOptions(options: ConvertOptions = {}): ConvertOptions {
   return {
     pages: options.pages?.map((pageIndex) => Math.trunc(pageIndex)),
     dpi: options.dpi !== undefined ? Math.trunc(options.dpi) : undefined,
-    outputFormat: options.outputFormat ?? "png",
+    outputFormat: options.outputFormat ?? DEFAULT_OUTPUT_FORMAT,
     password: options.password,
     crop: normalizeCrop(options.crop),
     renderAnnotations: options.renderAnnotations,
@@ -117,22 +136,10 @@ function mapNativeError(error: unknown): never {
   if (error instanceof Error) {
     const separatorIndex = error.message.indexOf(":");
     if (separatorIndex > 0) {
-      const code = error.message.slice(
-        0,
-        separatorIndex,
-      ) as PdfToImagesErrorCode;
+      const code = error.message.slice(0, separatorIndex);
       const message = error.message.slice(separatorIndex + 1).trim();
 
-      if (
-        code === "INVALID_INPUT" ||
-        code === "INVALID_OPTIONS" ||
-        code === "INVALID_PAGE_INDEX" ||
-        code === "INVALID_CROP" ||
-        code === "PASSWORD_ERROR" ||
-        code === "MALFORMED_PDF" ||
-        code === "PDFIUM_UNAVAILABLE" ||
-        code === "RENDER_ERROR"
-      ) {
+      if (isNativeErrorCode(code)) {
         throw new PdfToImagesError(code, message, { cause: error });
       }
     }

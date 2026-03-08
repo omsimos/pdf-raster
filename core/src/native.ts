@@ -39,11 +39,53 @@ type NativeBinding = {
   ): Promise<ConvertedPage[]>;
 };
 
+type TargetBindingDescriptor = {
+  localBinary: string;
+  packageName: string;
+};
+
 const require = createRequire(import.meta.url);
 const here = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(here, "..");
 const workspaceRoot = resolve(packageRoot, "..", "..");
 const loadErrors: unknown[] = [];
+const TARGET_BINDINGS: Partial<
+  Record<
+    NodeJS.Platform,
+    Partial<Record<NodeJS.Architecture, TargetBindingDescriptor>>
+  >
+> = {
+  darwin: {
+    arm64: {
+      localBinary: "../pdf-raster.darwin-arm64.node",
+      packageName: "@omsimos/pdf-raster-darwin-arm64",
+    },
+    x64: {
+      localBinary: "../pdf-raster.darwin-x64.node",
+      packageName: "@omsimos/pdf-raster-darwin-x64",
+    },
+  },
+  linux: {
+    arm64: {
+      localBinary: "../pdf-raster.linux-arm64-gnu.node",
+      packageName: "@omsimos/pdf-raster-linux-arm64-gnu",
+    },
+    x64: {
+      localBinary: "../pdf-raster.linux-x64-gnu.node",
+      packageName: "@omsimos/pdf-raster-linux-x64-gnu",
+    },
+  },
+  win32: {
+    arm64: {
+      localBinary: "../pdf-raster.win32-arm64-msvc.node",
+      packageName: "@omsimos/pdf-raster-win32-arm64-msvc",
+    },
+    x64: {
+      localBinary: "../pdf-raster.win32-x64-msvc.node",
+      packageName: "@omsimos/pdf-raster-win32-x64-msvc",
+    },
+  },
+};
 
 function isMusl(): boolean {
   if (process.platform !== "linux") {
@@ -132,94 +174,26 @@ function getPdfiumCandidates(): string[] {
   ];
 }
 
-function requireLocalDarwinArm64(): NativeBinding | null {
+function requireBinding(specifier: string): NativeBinding | null {
   try {
-    return require("../pdf-raster.darwin-arm64.node") as NativeBinding;
+    return require(specifier) as NativeBinding;
   } catch (error) {
     loadErrors.push(error);
     return null;
   }
 }
 
-function requireLocalDarwinX64(): NativeBinding | null {
-  try {
-    return require("../pdf-raster.darwin-x64.node") as NativeBinding;
-  } catch (error) {
-    loadErrors.push(error);
-    return null;
-  }
-}
-
-function requireLocalLinuxArm64Gnu(): NativeBinding | null {
-  try {
-    return require("../pdf-raster.linux-arm64-gnu.node") as NativeBinding;
-  } catch (error) {
-    loadErrors.push(error);
-    return null;
-  }
-}
-
-function requireLocalLinuxX64Gnu(): NativeBinding | null {
-  try {
-    return require("../pdf-raster.linux-x64-gnu.node") as NativeBinding;
-  } catch (error) {
-    loadErrors.push(error);
-    return null;
-  }
-}
-
-function requireLocalWin32Arm64Msvc(): NativeBinding | null {
-  try {
-    return require("../pdf-raster.win32-arm64-msvc.node") as NativeBinding;
-  } catch (error) {
-    loadErrors.push(error);
-    return null;
-  }
-}
-
-function requireLocalWin32X64Msvc(): NativeBinding | null {
-  try {
-    return require("../pdf-raster.win32-x64-msvc.node") as NativeBinding;
-  } catch (error) {
-    loadErrors.push(error);
-    return null;
-  }
-}
-
-function requirePackage(packageName: string): NativeBinding | null {
-  try {
-    return require(packageName) as NativeBinding;
-  } catch (error) {
-    loadErrors.push(error);
-    return null;
-  }
+function getTargetBinding(): TargetBindingDescriptor | null {
+  return TARGET_BINDINGS[process.platform]?.[process.arch] ?? null;
 }
 
 function loadNativeBinding(): NativeBinding {
   ensureBundledPdfiumPath();
 
   if (process.env.NAPI_RS_NATIVE_LIBRARY_PATH) {
-    const explicit = requirePackage(process.env.NAPI_RS_NATIVE_LIBRARY_PATH);
+    const explicit = requireBinding(process.env.NAPI_RS_NATIVE_LIBRARY_PATH);
     if (explicit) {
       return explicit;
-    }
-  }
-
-  if (process.platform === "darwin") {
-    if (process.arch === "arm64") {
-      return (
-        requireLocalDarwinArm64() ??
-        requirePackage("@omsimos/pdf-raster-darwin-arm64") ??
-        failToLoad()
-      );
-    }
-
-    if (process.arch === "x64") {
-      return (
-        requireLocalDarwinX64() ??
-        requirePackage("@omsimos/pdf-raster-darwin-x64") ??
-        failToLoad()
-      );
     }
   }
 
@@ -229,40 +203,15 @@ function loadNativeBinding(): NativeBinding {
         "Failed to load the native @omsimos/pdf-raster binding for linux musl. Prebuilt musl artifacts are not published for this package.",
       );
     }
-
-    if (process.arch === "arm64") {
-      return (
-        requireLocalLinuxArm64Gnu() ??
-        requirePackage("@omsimos/pdf-raster-linux-arm64-gnu") ??
-        failToLoad()
-      );
-    }
-
-    if (process.arch === "x64") {
-      return (
-        requireLocalLinuxX64Gnu() ??
-        requirePackage("@omsimos/pdf-raster-linux-x64-gnu") ??
-        failToLoad()
-      );
-    }
   }
 
-  if (process.platform === "win32") {
-    if (process.arch === "arm64") {
-      return (
-        requireLocalWin32Arm64Msvc() ??
-        requirePackage("@omsimos/pdf-raster-win32-arm64-msvc") ??
-        failToLoad()
-      );
-    }
-
-    if (process.arch === "x64") {
-      return (
-        requireLocalWin32X64Msvc() ??
-        requirePackage("@omsimos/pdf-raster-win32-x64-msvc") ??
-        failToLoad()
-      );
-    }
+  const targetBinding = getTargetBinding();
+  if (targetBinding) {
+    return (
+      requireBinding(targetBinding.localBinary) ??
+      requireBinding(targetBinding.packageName) ??
+      failToLoad()
+    );
   }
 
   return failToLoad();
