@@ -1,5 +1,5 @@
 {
-  "name": "pdf-to-images",
+  "name": "pdf-raster",
   "private": true,
   "scripts": {
     "benchmark": "bun run --cwd benchmark benchmark",
@@ -10,7 +10,7 @@
     "format-and-lint": "biome check .",
     "format-and-lint:fix": "biome check . --write",
     "check-types": "turbo run check-types",
-    "pdfium:download": "bun run --filter @omsimos/pdf-to-images pdfium:download",
+    "pdfium:download": "bun run --filter @omsimos/pdf-raster pdfium:download",
     "release:check-changeset": "bun ./scripts/check-changeset.ts",
     "release:publish": "bun ./scripts/publish-packages.ts",
     "version-packages": "changeset version",

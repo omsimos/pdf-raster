@@ -134,7 +134,7 @@ function getPdfiumCandidates(): string[] {
 
 function requireLocalDarwinArm64(): NativeBinding | null {
   try {
-    return require("../pdf-to-images.darwin-arm64.node") as NativeBinding;
+    return require("../pdf-raster.darwin-arm64.node") as NativeBinding;
   } catch (error) {
     loadErrors.push(error);
     return null;
@@ -143,7 +143,7 @@ function requireLocalDarwinArm64(): NativeBinding | null {
 
 function requireLocalDarwinX64(): NativeBinding | null {
   try {
-    return require("../pdf-to-images.darwin-x64.node") as NativeBinding;
+    return require("../pdf-raster.darwin-x64.node") as NativeBinding;
   } catch (error) {
     loadErrors.push(error);
     return null;
@@ -152,7 +152,7 @@ function requireLocalDarwinX64(): NativeBinding | null {
 
 function requireLocalLinuxArm64Gnu(): NativeBinding | null {
   try {
-    return require("../pdf-to-images.linux-arm64-gnu.node") as NativeBinding;
+    return require("../pdf-raster.linux-arm64-gnu.node") as NativeBinding;
   } catch (error) {
     loadErrors.push(error);
     return null;
@@ -161,7 +161,7 @@ function requireLocalLinuxArm64Gnu(): NativeBinding | null {
 
 function requireLocalLinuxX64Gnu(): NativeBinding | null {
   try {
-    return require("../pdf-to-images.linux-x64-gnu.node") as NativeBinding;
+    return require("../pdf-raster.linux-x64-gnu.node") as NativeBinding;
   } catch (error) {
     loadErrors.push(error);
     return null;
@@ -170,7 +170,7 @@ function requireLocalLinuxX64Gnu(): NativeBinding | null {
 
 function requireLocalWin32Arm64Msvc(): NativeBinding | null {
   try {
-    return require("../pdf-to-images.win32-arm64-msvc.node") as NativeBinding;
+    return require("../pdf-raster.win32-arm64-msvc.node") as NativeBinding;
   } catch (error) {
     loadErrors.push(error);
     return null;
@@ -179,7 +179,7 @@ function requireLocalWin32Arm64Msvc(): NativeBinding | null {
 
 function requireLocalWin32X64Msvc(): NativeBinding | null {
   try {
-    return require("../pdf-to-images.win32-x64-msvc.node") as NativeBinding;
+    return require("../pdf-raster.win32-x64-msvc.node") as NativeBinding;
   } catch (error) {
     loadErrors.push(error);
     return null;
@@ -209,7 +209,7 @@ function loadNativeBinding(): NativeBinding {
     if (process.arch === "arm64") {
       return (
         requireLocalDarwinArm64() ??
-        requirePackage("@omsimos/pdf-to-images-darwin-arm64") ??
+        requirePackage("@omsimos/pdf-raster-darwin-arm64") ??
         failToLoad()
       );
     }
@@ -217,7 +217,7 @@ function loadNativeBinding(): NativeBinding {
     if (process.arch === "x64") {
       return (
         requireLocalDarwinX64() ??
-        requirePackage("@omsimos/pdf-to-images-darwin-x64") ??
+        requirePackage("@omsimos/pdf-raster-darwin-x64") ??
         failToLoad()
       );
     }
@@ -226,14 +226,14 @@ function loadNativeBinding(): NativeBinding {
   if (process.platform === "linux") {
     if (isMusl()) {
       throw new Error(
-        "Failed to load the native @omsimos/pdf-to-images binding for linux musl. Prebuilt musl artifacts are not published for this package.",
+        "Failed to load the native @omsimos/pdf-raster binding for linux musl. Prebuilt musl artifacts are not published for this package.",
       );
     }
 
     if (process.arch === "arm64") {
       return (
         requireLocalLinuxArm64Gnu() ??
-        requirePackage("@omsimos/pdf-to-images-linux-arm64-gnu") ??
+        requirePackage("@omsimos/pdf-raster-linux-arm64-gnu") ??
         failToLoad()
       );
     }
@@ -241,7 +241,7 @@ function loadNativeBinding(): NativeBinding {
     if (process.arch === "x64") {
       return (
         requireLocalLinuxX64Gnu() ??
-        requirePackage("@omsimos/pdf-to-images-linux-x64-gnu") ??
+        requirePackage("@omsimos/pdf-raster-linux-x64-gnu") ??
         failToLoad()
       );
     }
@@ -251,7 +251,7 @@ function loadNativeBinding(): NativeBinding {
     if (process.arch === "arm64") {
       return (
         requireLocalWin32Arm64Msvc() ??
-        requirePackage("@omsimos/pdf-to-images-win32-arm64-msvc") ??
+        requirePackage("@omsimos/pdf-raster-win32-arm64-msvc") ??
         failToLoad()
       );
     }
@@ -259,7 +259,7 @@ function loadNativeBinding(): NativeBinding {
     if (process.arch === "x64") {
       return (
         requireLocalWin32X64Msvc() ??
-        requirePackage("@omsimos/pdf-to-images-win32-x64-msvc") ??
+        requirePackage("@omsimos/pdf-raster-win32-x64-msvc") ??
         failToLoad()
       );
     }
@@ -273,7 +273,7 @@ function failToLoad(): never {
     .map((error) => (error instanceof Error ? error.message : String(error)))
     .join("\n");
   throw new Error(
-    `Failed to load the native @omsimos/pdf-to-images binding for ${process.platform}/${process.arch}.${details ? `\n${details}` : ""}`,
+    `Failed to load the native @omsimos/pdf-raster binding for ${process.platform}/${process.arch}.${details ? `\n${details}` : ""}`,
   );
 }
 

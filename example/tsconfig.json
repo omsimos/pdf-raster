@@ -18,7 +18,7 @@
     "incremental": true,
     "paths": {
       "@/*": ["./*"],
-      "@omsimos/pdf-to-images": ["../core/src/index.ts"]
+      "@omsimos/pdf-raster": ["../core/src/index.ts"]
     },
     "plugins": [
       {

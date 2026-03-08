@@ -1,8 +1,8 @@
-# `@omsimos/pdf-to-images`
+# `@omsimos/pdf-raster`
 
 Native PDF-to-images conversion for Node.js and Bun.
 
-`@omsimos/pdf-to-images` renders PDF pages into encoded image buffers through a
+`@omsimos/pdf-raster` renders PDF pages into encoded image buffers through a
 small server-side API. It is built for backend workflows that need fast page
 images from PDFs, whether that is previews, uploads, OCR handoff, VLM input, or
 document processing in jobs and APIs.
@@ -19,13 +19,13 @@ document processing in jobs and APIs.
 ## Install
 
 ```bash
-bun add @omsimos/pdf-to-images
+bun add @omsimos/pdf-raster
 ```
 
 ## Quick usage
 
 ```ts
-import { convert } from "@omsimos/pdf-to-images";
+import { convert } from "@omsimos/pdf-raster";
 
 const [page] = await convert("./report.pdf", {
   pages: [0],
@@ -113,7 +113,7 @@ bun run benchmark
 
 It compares:
 
-- `@omsimos/pdf-to-images`
+- `@omsimos/pdf-raster`
 - `pdfjs-dist + @napi-rs/canvas`
 - `pdfjs-dist + node-canvas`
 
@@ -136,27 +136,27 @@ Settings: dpi=300, output=png, pages=all, warmups=1, runs=5
 Input size: 842 B
 Library                       Pages  Avg total  P50 total  Avg/page  Avg bytes
 ----------------------------  -----  ---------  ---------  --------  ---------
-@omsimos/pdf-to-images        2      1.90 ms    1.88 ms    0.95 ms   36.2 KB
+@omsimos/pdf-raster        2      1.90 ms    1.88 ms    0.95 ms   36.2 KB
 pdfjs-dist + @napi-rs/canvas  2      11.73 ms   11.66 ms   5.87 ms   22.6 KB
 pdfjs-dist + node-canvas      2      14.19 ms   14.20 ms   7.09 ms   22.8 KB
 
-Relative speed (@omsimos/pdf-to-images vs pdfjs-dist + @napi-rs/canvas): total 6.19x
-Relative speed (@omsimos/pdf-to-images vs pdfjs-dist + node-canvas): total 7.48x
+Relative speed (@omsimos/pdf-raster vs pdfjs-dist + @napi-rs/canvas): total 6.19x
+Relative speed (@omsimos/pdf-raster vs pdfjs-dist + node-canvas): total 7.48x
 
 File: single-page.pdf
 Settings: dpi=300, output=png, pages=all, warmups=1, runs=5
 Input size: 583 B
 Library                       Pages  Avg total  P50 total  Avg/page  Avg bytes
 ----------------------------  -----  ---------  ---------  --------  ---------
-@omsimos/pdf-to-images        1      1.35 ms    1.08 ms    1.35 ms   13.4 KB
+@omsimos/pdf-raster        1      1.35 ms    1.08 ms    1.35 ms   13.4 KB
 pdfjs-dist + @napi-rs/canvas  1      5.78 ms    5.78 ms    5.78 ms   7.6 KB
 pdfjs-dist + node-canvas      1      7.15 ms    7.02 ms    7.15 ms   7.8 KB
 
-Relative speed (@omsimos/pdf-to-images vs pdfjs-dist + @napi-rs/canvas): total 4.27x
-Relative speed (@omsimos/pdf-to-images vs pdfjs-dist + node-canvas): total 5.27x
+Relative speed (@omsimos/pdf-raster vs pdfjs-dist + @napi-rs/canvas): total 4.27x
+Relative speed (@omsimos/pdf-raster vs pdfjs-dist + node-canvas): total 5.27x
 ```
 
-On that local run, `@omsimos/pdf-to-images` was roughly `4x–6x` faster than
+On that local run, `@omsimos/pdf-raster` was roughly `4x–6x` faster than
 both `pdfjs-dist` canvas backends on the included fixtures. Treat those numbers
 as sample results, not universal guarantees.
 
@@ -164,7 +164,7 @@ as sample results, not universal guarantees.
 
 This repository is a Bun + Turborepo monorepo with:
 
-- `core`: the publishable `@omsimos/pdf-to-images` package
+- `core`: the publishable `@omsimos/pdf-raster` package
 - `example`: the interactive demo app
 - `docs`: the Fumadocs documentation app
 - `benchmark`: the internal performance comparison CLI

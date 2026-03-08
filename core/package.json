@@ -1,5 +1,5 @@
 {
-  "name": "@omsimos/pdf-to-images",
+  "name": "@omsimos/pdf-raster",
   "version": "0.0.0",
   "description": "High-performance PDF to image conversion for Node.js and Bun.",
   "type": "module",
@@ -7,11 +7,11 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/omsimos/pdf-to-images.git"
+    "url": "git+https://github.com/omsimos/pdf-raster.git"
   },
-  "homepage": "https://github.com/omsimos/pdf-to-images#readme",
+  "homepage": "https://github.com/omsimos/pdf-raster#readme",
   "bugs": {
-    "url": "https://github.com/omsimos/pdf-to-images/issues"
+    "url": "https://github.com/omsimos/pdf-raster/issues"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -33,8 +33,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "napi": {
-    "binaryName": "pdf-to-images",
-    "packageName": "@omsimos/pdf-to-images",
+    "binaryName": "pdf-raster",
+    "packageName": "@omsimos/pdf-raster",
     "targets": [
       "x86_64-apple-darwin",
       "aarch64-apple-darwin",

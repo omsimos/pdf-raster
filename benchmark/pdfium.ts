@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import type { BenchOptions, BenchRunResult } from "./types";
 
-type PdfToImagesModule = typeof import("@omsimos/pdf-to-images");
+type PdfToImagesModule = typeof import("@omsimos/pdf-raster");
 
 const runtimeImport = new Function("specifier", "return import(specifier)") as <
   T,
@@ -19,27 +19,27 @@ const coreRoot = resolve(repoRoot, "core");
 
 function getNativeBinaryName(): string {
   if (process.platform === "darwin" && process.arch === "arm64") {
-    return "pdf-to-images.darwin-arm64.node";
+    return "pdf-raster.darwin-arm64.node";
   }
 
   if (process.platform === "darwin" && process.arch === "x64") {
-    return "pdf-to-images.darwin-x64.node";
+    return "pdf-raster.darwin-x64.node";
   }
 
   if (process.platform === "linux" && process.arch === "arm64") {
-    return "pdf-to-images.linux-arm64-gnu.node";
+    return "pdf-raster.linux-arm64-gnu.node";
   }
 
   if (process.platform === "linux" && process.arch === "x64") {
-    return "pdf-to-images.linux-x64-gnu.node";
+    return "pdf-raster.linux-x64-gnu.node";
   }
 
   if (process.platform === "win32" && process.arch === "arm64") {
-    return "pdf-to-images.win32-arm64-msvc.node";
+    return "pdf-raster.win32-arm64-msvc.node";
   }
 
   if (process.platform === "win32" && process.arch === "x64") {
-    return "pdf-to-images.win32-x64-msvc.node";
+    return "pdf-raster.win32-x64-msvc.node";
   }
 
   throw new Error(
@@ -91,7 +91,7 @@ async function ensureCoreBuilt(): Promise<void> {
 
 async function loadPdfToImages(): Promise<PdfToImagesModule> {
   await ensureCoreBuilt();
-  return runtimeImport<PdfToImagesModule>("@omsimos/pdf-to-images");
+  return runtimeImport<PdfToImagesModule>("@omsimos/pdf-raster");
 }
 
 function getMimeType(outputFormat: BenchOptions["outputFormat"]): string {
@@ -136,7 +136,7 @@ export async function runPdfiumBenchmark(
   );
 
   return {
-    library: "@omsimos/pdf-to-images",
+    library: "@omsimos/pdf-raster",
     backend: "public convert() API",
     pageCount: pages.length,
     dpi: options.dpi,

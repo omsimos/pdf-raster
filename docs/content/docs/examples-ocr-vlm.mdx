@@ -14,7 +14,7 @@ tools after rendering.
 ## Tesseract.js
 
 ```ts
-import { convert } from "@omsimos/pdf-to-images";
+import { convert } from "@omsimos/pdf-raster";
 import { createWorker } from "tesseract.js";
 
 const worker = await createWorker("eng");
@@ -33,7 +33,7 @@ into OCR libraries that accept image bytes.
 ## AI SDK `generateText`
 
 ```ts
-import { convert } from "@omsimos/pdf-to-images";
+import { convert } from "@omsimos/pdf-raster";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 
@@ -70,7 +70,7 @@ The converted page result is already shaped for downstream use:
 ## Boundary to preserve
 
 <Callout type="info" title="Keep responsibilities separated">
-  `@omsimos/pdf-to-images` handles the PDF-to-image step. OCR engines, VLM
+  `@omsimos/pdf-raster` handles the PDF-to-image step. OCR engines, VLM
   providers, and post-processing can be layered on top in app code or separate
   packages.
 </Callout>

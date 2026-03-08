@@ -52,7 +52,7 @@ for (const filePath of files) {
     continue;
   }
 
-  const match = /pdf-to-images\.(.+)\.node$/.exec(filePath);
+  const match = /pdf-raster\.(.+)\.node$/.exec(filePath);
   if (!match) {
     continue;
   }

@@ -13,9 +13,9 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Example | @omsimos/pdf-to-images",
+  title: "Example | @omsimos/pdf-raster",
   description:
-    "Interactive Next.js example for converting PDF pages into PNG images with @omsimos/pdf-to-images.",
+    "Interactive Next.js example for converting PDF pages into PNG images with @omsimos/pdf-raster.",
 };
 
 export default function RootLayout({

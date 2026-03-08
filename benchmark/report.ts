@@ -175,7 +175,7 @@ export function printHumanReport(report: BenchmarkReport): void {
     }
 
     const ours = file.summaries.find(
-      (summary) => summary.library === "@omsimos/pdf-to-images",
+      (summary) => summary.library === "@omsimos/pdf-raster",
     );
     const pdfjsComparisons = file.summaries.filter(
       (summary) => summary.library === "pdfjs-dist",

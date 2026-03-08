@@ -32,7 +32,7 @@ function expectPageShape(page: ConvertedPage, pageIndex: number, dpi: number) {
   expect(page.data.byteLength).toBeGreaterThan(8);
 }
 
-describe("@omsimos/pdf-to-images", () => {
+describe("@omsimos/pdf-raster", () => {
   test("converts all pages by default from an in-memory buffer", async () => {
     const bytes = await readFile(multiPageFixture);
     const pages = await convert(bytes);

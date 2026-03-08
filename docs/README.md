@@ -1,6 +1,6 @@
 # docs
 
-This app is the documentation site for `@omsimos/pdf-to-images`, built with
+This app is the documentation site for `@omsimos/pdf-raster`, built with
 Fumadocs and Next.js.
 
 ## Commands
@@ -25,4 +25,4 @@ The docs app runs on port `3001` in local development.
 
 - the app stays standalone on Fumadocs UI
 - `check-types` runs Fumadocs MDX generation, Next type generation, and `tsc`
-- docs content is currently focused on `@omsimos/pdf-to-images`
+- docs content is currently focused on `@omsimos/pdf-raster`

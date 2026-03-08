@@ -9,7 +9,7 @@ Use these patterns when conversion happens entirely in server code or a worker.
 
 ```ts
 import { writeFile } from "node:fs/promises";
-import { convert } from "@omsimos/pdf-to-images";
+import { convert } from "@omsimos/pdf-raster";
 
 const [firstPage] = await convert("./report.pdf", {
   pages: [0],
@@ -28,7 +28,7 @@ save or inspect the rendered image output directly.
 ## Convert selected pages from a larger document
 
 ```ts
-import { convert } from "@omsimos/pdf-to-images";
+import { convert } from "@omsimos/pdf-raster";
 
 const pages = await convert("./report.pdf", {
   pages: [0, 3, 4],
@@ -39,7 +39,7 @@ const pages = await convert("./report.pdf", {
 ## Request a different output format
 
 ```ts
-import { convert } from "@omsimos/pdf-to-images";
+import { convert } from "@omsimos/pdf-raster";
 
 const pages = await convert("./report.pdf", {
   outputFormat: "webp",
@@ -57,7 +57,7 @@ matter more than lossless output.
 
 ```ts
 import { readFile } from "node:fs/promises";
-import { convert } from "@omsimos/pdf-to-images";
+import { convert } from "@omsimos/pdf-raster";
 
 const bytes = await readFile("./invoice.pdf");
 const pages = await convert(bytes, {

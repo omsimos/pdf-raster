@@ -4,11 +4,11 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: {
-    default: "omsimos/pdf-to-images",
-    template: "%s | omsimos/pdf-to-images",
+    default: "omsimos/pdf-raster",
+    template: "%s | omsimos/pdf-raster",
   },
   description:
-    "Documentation for @omsimos/pdf-to-images, a native PDF to images library for backend and document workflows.",
+    "Documentation for @omsimos/pdf-raster, a native PDF to images library for backend and document workflows.",
 };
 
 export default function Layout({ children }: LayoutProps<"/">) {
