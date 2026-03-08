@@ -7,5 +7,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@omsimos/ui", "@repo/typescript-config", "docs", "example"]
+  "ignore": ["docs", "example"]
 }
