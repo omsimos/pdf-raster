@@ -67,7 +67,7 @@ jobs:
           targets: ${{ matrix.rust_targets }}
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install --frozen-lockfile --filter @omsimos/pdf-raster
 
       - name: Build TypeScript entrypoint
         run: bun run --filter @omsimos/pdf-raster build:types
