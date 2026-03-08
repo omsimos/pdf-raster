@@ -70,7 +70,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Build TypeScript entrypoint
-        run: bun run --filter @omsimos/pdf-to-images build:types
+        run: bun run --filter @omsimos/pdf-raster build:types
 
       - name: Build native binding
         shell: bash
