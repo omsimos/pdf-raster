@@ -1,48 +1,75 @@
-# `@omsimos/pdf-raster`
+# @omsimos/pdf-raster
 
-Native PDF-to-images conversion for Node.js and Bun.
+[![NPM Version](https://img.shields.io/npm/v/@omsimos/pdf-raster)](https://www.npmjs.com/package/@omsimos/pdf-raster)
+[![License](https://img.shields.io/github/license/omsimos/pdf-raster)](https://github.com/omsimos/pdf-raster/blob/main/LICENSE)
+[![Bun](https://img.shields.io/badge/Bun-%23282a36.svg?logo=bun&logoColor=white)](https://bun.sh)
 
-`@omsimos/pdf-raster` renders PDF pages into encoded image buffers through a
-small server-side API. It is built for backend workflows that need fast page
-images from PDFs, whether that is previews, uploads, OCR handoff, VLM input, or
-document processing in jobs and APIs.
+**Blazing fast, native PDF-to-image conversion for Node.js and Bun.**
 
-## Features
+`@omsimos/pdf-raster` renders PDF pages into high-quality image buffers using a high-performance Rust engine. Built with `napi-rs` and `PDFium`, it is optimized for server-side workflows like OCR pipelines, VLM (Vision Language Model) inputs, and document previews.
 
-- Native rendering with Rust, `napi-rs`, and PDFium
-- One small API: `convert(input, options?)`
-- Encoded image output with `png` default and `jpeg` / `webp` support
-- File path and in-memory PDF input support
-- Multi-page conversion in a single call
-- Works in Node.js and Bun on supported server platforms
+[**Explore Documentation**](https://pdf-raster.omsimos.com/)
 
-## Install
+---
+
+## ✨ Why @omsimos/pdf-raster?
+
+- 🚀 **High Performance:** 4x–8x faster than `pdfjs-dist` canvas-based implementations in the included local benchmark run.
+- 🦀 **Native Power:** Leverages Rust and PDFium for industry-standard rendering.
+- 🛠️ **Simple API:** A single `convert()` function handles everything.
+- 📦 **Memory Efficient:** Supports `Buffer` inputs for processing without temp files.
+- 🎨 **Flexible Output:** Native support for `png`, `jpeg`, and `webp`.
+
+## 📦 Install
 
 ```bash
+# Using Bun
 bun add @omsimos/pdf-raster
+
+# Using NPM
+npm install @omsimos/pdf-raster
 ```
 
-## Quick usage
+## 📖 Quick Usage
 
 ```ts
 import { convert } from "@omsimos/pdf-raster";
+import { writeFile } from "node:fs/promises";
 
+// Convert specific pages to high-quality WebP
 const [page] = await convert("./report.pdf", {
-  pages: [0],
+  pages: [0], // 0-indexed page numbers
+  dpi: 300, // Higher DPI is useful for OCR and VLM inputs
+  outputFormat: "webp",
 });
 
-console.log({
-  pageIndex: page.pageIndex,
-  mimeType: page.mimeType,
-  width: page.width,
-  height: page.height,
-  dpi: page.dpi,
-});
+console.log(`Rendered page ${page.pageIndex} (${page.width}x${page.height})`);
 
-// page.data is the encoded image buffer
+// page.data is a Buffer of the encoded image
+await writeFile("output.webp", page.data);
 ```
 
-Each returned page looks like:
+## 🛠 API Reference
+
+### `convert(input, options?)`
+
+#### `input`
+
+- **Type:** `string | Buffer | Uint8Array | ArrayBuffer`
+- **Description:** A file path to a PDF or an in-memory PDF byte source.
+
+#### `options` (Optional)
+
+| Option              | Type                        | Default | Description                                         |
+| :------------------ | :-------------------------- | :------ | :-------------------------------------------------- |
+| `pages`             | `number[]`                  | `all`   | Specific pages to render, using 0-indexed values.   |
+| `dpi`               | `number`                    | `300`   | Resolution of the output image.                     |
+| `outputFormat`      | `"png" \| "jpeg" \| "webp"` | `"png"` | Encoding format for the returned buffers.           |
+| `password`          | `string`                    | `-`     | Password for encrypted PDFs.                        |
+| `crop`              | `{ x, y, width, height }`   | `-`     | Crop rectangle in rendered image pixel coordinates. |
+| `renderAnnotations` | `boolean`                   | `true`  | Whether to render annotations and form data.        |
+
+#### Return Value: `Promise<ConvertedPage[]>`
 
 ```ts
 type ConvertedPage = {
@@ -55,131 +82,48 @@ type ConvertedPage = {
 };
 ```
 
-## Output formats
+## ⚡ Performance Benchmark
 
-- Default: `png`
-- Supported: `png`, `jpeg`, `webp`
+Tested on **Apple Silicon (M4)**. Results represent a local benchmark run against the included fixture PDFs at `300 DPI`.
 
-```ts
-const pages = await convert("./report.pdf", {
-  outputFormat: "webp",
-});
+| Library                      | Avg/Page    | Relative Speed         |
+| :--------------------------- | :---------- | :--------------------- |
+| **@omsimos/pdf-raster**      | **0.86 ms** | **Baseline (Fastest)** |
+| pdfjs-dist + @napi-rs/canvas | 5.98 ms     | ~6.9x slower           |
+| pdfjs-dist + node-canvas     | 7.19 ms     | ~8.4x slower           |
 
-console.log(pages[0].mimeType);
-// "image/webp"
-```
+> [!NOTE]
+> Benchmark results are based on internal fixtures. Your performance may vary based on PDF complexity and hardware. Run `bun run benchmark` to test on your own machine.
 
-## Supported runtimes and platforms
+## 🌍 Runtime & Platform Support
 
-This package is server-side only.
+This package uses native bindings and is intended for **server-side environments only**.
 
-Supported runtimes:
+| Runtime           | Supported |
+| :---------------- | :-------- |
+| **Node.js**       | ✅ Yes    |
+| **Bun**           | ✅ Yes    |
+| **Browser**       | ❌ No     |
+| **Edge Runtimes** | ❌ No     |
 
-- Node.js
-- Bun
+**Supported Architectures:**
 
-Current target matrix:
+- **OS:** Linux (gnu), macOS, Windows
+- **Arch:** x64, arm64
 
-- macOS x64 / arm64
-- Linux x64 / arm64 (`gnu`)
-- Windows x64 / arm64
+> [!CAUTION]
+> Do not import this into browser bundles, React Client Components, or Vercel Edge Functions.
 
-Do not import it into browser bundles, React client components, or Edge
-runtimes.
+## 🛠 Local Development
 
-## Common uses
+This repository is a Bun + Turborepo monorepo.
 
-- Generate page previews from uploaded PDFs
-- Feed OCR or VLM pipelines with rendered page images
-- Convert PDFs inside API routes, workers, and batch jobs
-- Process documents from object storage, queues, or other backend systems
+1. **Setup:** `bun install`
+2. **Native Binaries:** `bun run pdfium:download`
+3. **Build:** `bun run build`
+4. **Test:** `bun run test`
+5. **Benchmark:** `bun run benchmark`
 
-## Examples and docs
-
-- Quickstart: [`docs/content/docs/quickstart.mdx`](./docs/content/docs/quickstart.mdx)
-- Node.js usage: [`docs/content/docs/examples-node.mdx`](./docs/content/docs/examples-node.mdx)
-- Next.js route handler: [`docs/content/docs/examples-nextjs.mdx`](./docs/content/docs/examples-nextjs.mdx)
-- OCR / VLM handoff: [`docs/content/docs/examples-ocr-vlm.mdx`](./docs/content/docs/examples-ocr-vlm.mdx)
-- Interactive demo app: [`example`](./example)
-- Documentation app: [`docs`](./docs)
-
-## Benchmark
-
-You can run the internal benchmark locally with:
-
-```bash
-bun run benchmark
-```
-
-It compares:
-
-- `@omsimos/pdf-raster`
-- `pdfjs-dist + @napi-rs/canvas`
-- `pdfjs-dist + node-canvas`
-
-The benchmark defaults to:
-
-- valid fixture PDFs in [`core/test/fixtures`](./core/test/fixtures)
-- `dpi=300`
-- `output=png`
-- one warmup run
-- repeated measured runs
-
-The benchmark workspace now requires both canvas backends. `node-canvas` may
-need native system prerequisites on the machine where you run it.
-
-Sample local run:
-
-```text
-File: multi-page.pdf
-Settings: dpi=300, output=png, pages=all, warmups=1, runs=5
-Input size: 842 B
-Library                       Pages  Avg total  P50 total  Avg/page  Avg bytes
-----------------------------  -----  ---------  ---------  --------  ---------
-@omsimos/pdf-raster           2      1.72 ms    1.70 ms    0.86 ms   36.2 KB
-pdfjs-dist + @napi-rs/canvas  2      11.96 ms   11.91 ms   5.98 ms   22.6 KB
-pdfjs-dist + node-canvas      2      14.37 ms   14.37 ms   7.19 ms   22.8 KB
-
-Relative speed (@omsimos/pdf-raster vs pdfjs-dist + @napi-rs/canvas): total 6.94x
-Relative speed (@omsimos/pdf-raster vs pdfjs-dist + node-canvas): total 8.35x
-
-File: single-page.pdf
-Settings: dpi=300, output=png, pages=all, warmups=1, runs=5
-Input size: 583 B
-Library                       Pages  Avg total  P50 total  Avg/page  Avg bytes
-----------------------------  -----  ---------  ---------  --------  ---------
-@omsimos/pdf-raster           1      1.29 ms    1.00 ms    1.29 ms   13.4 KB
-pdfjs-dist + @napi-rs/canvas  1      5.81 ms    5.83 ms    5.81 ms   7.6 KB
-pdfjs-dist + node-canvas      1      7.25 ms    7.26 ms    7.25 ms   7.8 KB
-
-Relative speed (@omsimos/pdf-raster vs pdfjs-dist + @napi-rs/canvas): total 4.51x
-Relative speed (@omsimos/pdf-raster vs pdfjs-dist + node-canvas): total 5.63x
-```
-
-On that local run, `@omsimos/pdf-raster` was roughly `4x–8x` faster than
-both `pdfjs-dist` canvas backends on the included fixtures. Treat those numbers
-as sample results, not universal guarantees.
-
-## Local development
-
-This repository is a Bun + Turborepo monorepo with:
-
-- `core`: the publishable `@omsimos/pdf-raster` package
-- `example`: the interactive demo app
-- `docs`: the Fumadocs documentation app
-- `benchmark`: the internal performance comparison CLI
-
-Common commands:
-
-```bash
-bun install
-bun run pdfium:download
-bun run dev
-bun run build
-bun run test
-bun run benchmark
-```
-
-## License
+## 📄 License
 
 MIT
