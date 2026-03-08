@@ -6,7 +6,10 @@
 
 **Blazing fast, native PDF-to-image conversion for Node.js and Bun.**
 
-`@omsimos/pdf-raster` renders PDF pages into high-quality image buffers using a high-performance Rust engine. Built with `napi-rs` and `PDFium`, it is optimized for server-side workflows like OCR pipelines, VLM (Vision Language Model) inputs, and document previews.
+`@omsimos/pdf-raster` renders PDF pages into high-quality image buffers using a
+high-performance Rust engine. Built with `napi-rs` and `PDFium`, it is
+optimized for server-side workflows like OCR pipelines, VLM (Vision Language
+Model) inputs, and document previews.
 
 [**Explore Documentation**](https://pdf-raster.omsimos.com/)
 
@@ -25,6 +28,9 @@
 ```bash
 # Using Bun
 bun add @omsimos/pdf-raster
+
+# Using PNPM
+pnpm add @omsimos/pdf-raster
 
 # Using NPM
 npm install @omsimos/pdf-raster
@@ -84,7 +90,8 @@ type ConvertedPage = {
 
 ## ⚡ Performance Benchmark
 
-Tested on **Apple Silicon (M4)**. Results represent a local benchmark run against the included fixture PDFs at `300 DPI`.
+Tested on **Apple Silicon (M4)**. Results represent a local benchmark run
+against the included fixture PDFs at `300 DPI`.
 
 | Library                      | Avg/Page    | Relative Speed         |
 | :--------------------------- | :---------- | :--------------------- |
@@ -93,7 +100,9 @@ Tested on **Apple Silicon (M4)**. Results represent a local benchmark run agains
 | pdfjs-dist + node-canvas     | 7.19 ms     | ~8.4x slower           |
 
 > [!NOTE]
-> Benchmark results are based on internal fixtures. Your performance may vary based on PDF complexity and hardware. Run `bun run benchmark` to test on your own machine.
+> Benchmark results are based on the included local fixtures. Performance will
+> vary with PDF complexity and hardware. Run `bun run benchmark` on your own
+> machine to compare against your environment.
 
 ## 🌍 Runtime & Platform Support
 
