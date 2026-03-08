@@ -1,6 +1,5 @@
 import { readFile } from "node:fs/promises";
 
-import { createCanvas, DOMMatrix, ImageData, Path2D } from "@napi-rs/canvas";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
 
 import type { BenchOptions, BenchRunResult } from "./types";
@@ -31,29 +30,16 @@ type PdfLoadingTask = {
   destroy(): Promise<void>;
 };
 
-const PDFJS_BACKEND = "pdfjs-dist + @napi-rs/canvas";
+export type CanvasLike = {
+  getContext(type: "2d"): unknown;
+  toBuffer(mimeType: string): Buffer;
+};
 
-function installCanvasGlobals(): void {
-  Object.assign(globalThis, {
-    DOMMatrix,
-    ImageData,
-    Path2D,
-  });
-}
-
-function encodeCanvas(
-  canvas: CanvasLike,
-  outputFormat: BenchOptions["outputFormat"],
-): Buffer {
-  const mimeType =
-    outputFormat === "jpeg"
-      ? "image/jpeg"
-      : outputFormat === "webp"
-        ? "image/webp"
-        : "image/png";
-
-  return canvas.toBuffer(mimeType);
-}
+export type PdfjsCanvasBackend = {
+  name: string;
+  installGlobals(): void;
+  createCanvas(width: number, height: number): CanvasLike;
+};
 
 function resolvePageSelection(pageCount: number, pages?: number[]): number[] {
   if (!pages || pages.length === 0) {
@@ -71,11 +57,38 @@ function resolvePageSelection(pageCount: number, pages?: number[]): number[] {
   return pages;
 }
 
+function encodeCanvas(
+  canvas: CanvasLike,
+  outputFormat: BenchOptions["outputFormat"],
+): Buffer {
+  const mimeType =
+    outputFormat === "jpeg"
+      ? "image/jpeg"
+      : outputFormat === "webp"
+        ? "image/webp"
+        : "image/png";
+
+  return canvas.toBuffer(mimeType);
+}
+
+function resolveMimeType(outputFormat: BenchOptions["outputFormat"]): string {
+  if (outputFormat === "jpeg") {
+    return "image/jpeg";
+  }
+
+  if (outputFormat === "webp") {
+    return "image/webp";
+  }
+
+  return "image/png";
+}
+
 export async function runPdfjsBenchmark(
+  backend: PdfjsCanvasBackend,
   inputPath: string,
   options: BenchOptions,
 ): Promise<BenchRunResult> {
-  installCanvasGlobals();
+  backend.installGlobals();
 
   const pdfBytes = new Uint8Array(await readFile(inputPath));
   const totalStart = performance.now();
@@ -102,7 +115,7 @@ export async function runPdfjsBenchmark(
       const viewport = page.getViewport({ scale });
       const width = Math.max(1, Math.ceil(viewport.width));
       const height = Math.max(1, Math.ceil(viewport.height));
-      const canvas = createCanvas(width, height) as CanvasLike;
+      const canvas = backend.createCanvas(width, height);
       const context = canvas.getContext("2d");
       const rasterStart = performance.now();
       const renderTask = page.render({
@@ -139,20 +152,14 @@ export async function runPdfjsBenchmark(
     await loadingTask.destroy();
   }
 
-  const mimeType =
-    options.outputFormat === "jpeg"
-      ? "image/jpeg"
-      : options.outputFormat === "webp"
-        ? "image/webp"
-        : "image/png";
   const totalMs = performance.now() - totalStart;
 
   return {
     library: "pdfjs-dist",
-    backend: PDFJS_BACKEND,
+    backend: backend.name,
     pageCount: pageResults.length,
     dpi: options.dpi,
-    mimeType,
+    mimeType: resolveMimeType(options.outputFormat),
     rasterMs,
     encodeMs,
     totalMs,
@@ -163,9 +170,3 @@ export async function runPdfjsBenchmark(
     pages: pageResults,
   };
 }
-
-export { PDFJS_BACKEND };
-type CanvasLike = {
-  getContext(type: "2d"): unknown;
-  toBuffer(mimeType: string): Buffer;
-};

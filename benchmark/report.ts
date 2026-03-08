@@ -63,11 +63,11 @@ export function summarizeRuns(runs: BenchRunResult[]): BenchSummary {
 
 export function createReport(
   files: FileBenchmarkReport[],
-  pdfjsBackend: string,
+  pdfjsBackends: string[],
 ): BenchmarkReport {
   return {
     generatedAt: new Date().toISOString(),
-    pdfjsBackend,
+    pdfjsBackends,
     files,
   };
 }
@@ -123,16 +123,23 @@ export function printHumanReport(report: BenchmarkReport): void {
 
     const showRaster = file.summaries.every((summary) => summary.rasterMs);
     const showEncode = file.summaries.every((summary) => summary.encodeMs);
-    const rows = file.summaries.map((summary) => ({
-      library: summary.library,
-      pages: String(summary.pageCount),
-      avgTotal: formatMs(summary.totalMs.avg),
-      p50Total: formatMs(summary.totalMs.p50),
-      ...(showRaster ? { avgRaster: formatOptionalMs(summary.rasterMs) } : {}),
-      ...(showEncode ? { avgEncode: formatOptionalMs(summary.encodeMs) } : {}),
-      avgPerPage: formatMs(summary.msPerPage.avg),
-      avgBytes: formatBytes(summary.outputBytes.avg),
-    }));
+    const rows: Array<Record<string, string>> = file.summaries.map(
+      (summary) => ({
+        library:
+          summary.library === "pdfjs-dist" ? summary.backend : summary.library,
+        pages: String(summary.pageCount),
+        avgTotal: formatMs(summary.totalMs.avg),
+        p50Total: formatMs(summary.totalMs.p50),
+        ...(showRaster
+          ? { avgRaster: formatOptionalMs(summary.rasterMs) }
+          : {}),
+        ...(showEncode
+          ? { avgEncode: formatOptionalMs(summary.encodeMs) }
+          : {}),
+        avgPerPage: formatMs(summary.msPerPage.avg),
+        avgBytes: formatBytes(summary.outputBytes.avg),
+      }),
+    );
     const headers = {
       library: "Library",
       pages: "Pages",
@@ -142,57 +149,45 @@ export function printHumanReport(report: BenchmarkReport): void {
       ...(showEncode ? { avgEncode: "Avg encode" } : {}),
       avgPerPage: "Avg/page",
       avgBytes: "Avg bytes",
-    };
+    } satisfies Record<string, string>;
+    const columns = Object.entries(headers) as Array<[string, string]>;
     const widths = Object.fromEntries(
-      Object.keys(headers).map((key) => {
-        const header = headers[key as keyof typeof headers];
+      columns.map(([key, header]) => {
         const rowWidth = Math.max(
-          ...rows.map((row) => row[key as keyof typeof row].length),
+          ...rows.map((row) => (row as Record<string, string>)[key].length),
           header.length,
         );
 
         return [key, rowWidth];
       }),
-    ) as Record<keyof typeof headers, number>;
-    const headerLine = Object.entries(headers)
-      .map(([key, label]) =>
-        padCell(label, widths[key as keyof typeof headers]),
-      )
+    ) as Record<string, number>;
+    const headerLine = columns
+      .map(([key, label]) => padCell(label, widths[key]))
       .join("  ");
 
     console.log(headerLine);
-    console.log(
-      Object.keys(headers)
-        .map((key) => "-".repeat(widths[key as keyof typeof headers]))
-        .join("  "),
-    );
+    console.log(columns.map(([key]) => "-".repeat(widths[key])).join("  "));
 
     for (const row of rows) {
       console.log(
-        Object.keys(headers)
-          .map((key) =>
-            padCell(
-              row[key as keyof typeof row],
-              widths[key as keyof typeof headers],
-            ),
-          )
-          .join("  "),
+        columns.map(([key]) => padCell(row[key], widths[key])).join("  "),
       );
     }
 
     const ours = file.summaries.find(
       (summary) => summary.library === "@omsimos/pdf-to-images",
     );
-    const pdfjs = file.summaries.find(
+    const pdfjsComparisons = file.summaries.filter(
       (summary) => summary.library === "pdfjs-dist",
     );
 
-    if (ours && pdfjs) {
+    if (ours && pdfjsComparisons.length > 0) {
       console.log("");
-      console.log(
-        `Relative speed (${ours.library} vs ${pdfjs.library}): total ${relativeSpeed(ours.totalMs.avg, pdfjs.totalMs.avg)}`,
-      );
-      console.log(`pdfjs backend: ${pdfjs.backend}`);
+      for (const pdfjs of pdfjsComparisons) {
+        console.log(
+          `Relative speed (${ours.library} vs ${pdfjs.backend}): total ${relativeSpeed(ours.totalMs.avg, pdfjs.totalMs.avg)}`,
+        );
+      }
     }
   }
 }

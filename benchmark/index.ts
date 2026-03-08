@@ -2,7 +2,11 @@ import { existsSync, statSync } from "node:fs";
 import { parseArgs } from "node:util";
 
 import { getDefaultBenchmarkInputs, runPdfiumBenchmark } from "./pdfium";
-import { PDFJS_BACKEND, runPdfjsBenchmark } from "./pdfjs";
+import { PDFJS_NAPI_BACKEND, runPdfjsNapiBenchmark } from "./pdfjs-napi";
+import {
+  PDFJS_NODE_CANVAS_BACKEND,
+  runPdfjsNodeCanvasBenchmark,
+} from "./pdfjs-node-canvas";
 import { createReport, printHumanReport, summarizeRuns } from "./report";
 import type {
   BenchOptions,
@@ -149,7 +153,16 @@ async function benchmarkFile(
 ): Promise<FileBenchmarkReport> {
   const inputBytes = statSync(inputPath).size;
   const ourRuns = await measureLibrary(runPdfiumBenchmark, inputPath, options);
-  const pdfjsRuns = await measureLibrary(runPdfjsBenchmark, inputPath, options);
+  const pdfjsNapiRuns = await measureLibrary(
+    runPdfjsNapiBenchmark,
+    inputPath,
+    options,
+  );
+  const pdfjsNodeCanvasRuns = await measureLibrary(
+    runPdfjsNodeCanvasBenchmark,
+    inputPath,
+    options,
+  );
 
   return {
     inputPath,
@@ -161,7 +174,11 @@ async function benchmarkFile(
       warmups: options.warmups,
       runs: options.runs,
     },
-    summaries: [summarizeRuns(ourRuns), summarizeRuns(pdfjsRuns)],
+    summaries: [
+      summarizeRuns(ourRuns),
+      summarizeRuns(pdfjsNapiRuns),
+      summarizeRuns(pdfjsNodeCanvasRuns),
+    ],
   };
 }
 
@@ -173,7 +190,10 @@ async function main(): Promise<void> {
     files.push(await benchmarkFile(inputPath, options));
   }
 
-  const report = createReport(files, PDFJS_BACKEND);
+  const report = createReport(files, [
+    PDFJS_NAPI_BACKEND,
+    PDFJS_NODE_CANVAS_BACKEND,
+  ]);
 
   if (options.json) {
     console.log(JSON.stringify(report, null, 2));

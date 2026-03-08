@@ -72,6 +72,6 @@ export type FileBenchmarkReport = {
 
 export type BenchmarkReport = {
   generatedAt: string;
-  pdfjsBackend: string;
+  pdfjsBackends: string[];
   files: FileBenchmarkReport[];
 };

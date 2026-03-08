@@ -115,6 +115,7 @@ It compares:
 
 - `@omsimos/pdf-to-images`
 - `pdfjs-dist + @napi-rs/canvas`
+- `pdfjs-dist + node-canvas`
 
 The benchmark defaults to:
 
@@ -124,35 +125,40 @@ The benchmark defaults to:
 - one warmup run
 - repeated measured runs
 
+The benchmark workspace now requires both canvas backends. `node-canvas` may
+need native system prerequisites on the machine where you run it.
+
 Sample local run:
 
 ```text
-File: multi-page.pdf (/Users/joshxfi/projects/open-source/pdf-to-images/core/test/fixtures/multi-page.pdf)
+File: multi-page.pdf
 Settings: dpi=300, output=png, pages=all, warmups=1, runs=5
 Input size: 842 B
-Library                 Pages  Avg total  P50 total  Avg/page  Avg bytes
-----------------------  -----  ---------  ---------  --------  ---------
-@omsimos/pdf-to-images  2      1.88 ms    1.81 ms    0.94 ms   36.2 KB
-pdfjs-dist              2      11.53 ms   11.47 ms   5.76 ms   22.6 KB
+Library                       Pages  Avg total  P50 total  Avg/page  Avg bytes
+----------------------------  -----  ---------  ---------  --------  ---------
+@omsimos/pdf-to-images        2      1.90 ms    1.88 ms    0.95 ms   36.2 KB
+pdfjs-dist + @napi-rs/canvas  2      11.73 ms   11.66 ms   5.87 ms   22.6 KB
+pdfjs-dist + node-canvas      2      14.19 ms   14.20 ms   7.09 ms   22.8 KB
 
-Relative speed (@omsimos/pdf-to-images vs pdfjs-dist): total 6.13x
-pdfjs backend: pdfjs-dist + @napi-rs/canvas
+Relative speed (@omsimos/pdf-to-images vs pdfjs-dist + @napi-rs/canvas): total 6.19x
+Relative speed (@omsimos/pdf-to-images vs pdfjs-dist + node-canvas): total 7.48x
 
-File: single-page.pdf (/Users/joshxfi/projects/open-source/pdf-to-images/core/test/fixtures/single-page.pdf)
+File: single-page.pdf
 Settings: dpi=300, output=png, pages=all, warmups=1, runs=5
 Input size: 583 B
-Library                 Pages  Avg total  P50 total  Avg/page  Avg bytes
-----------------------  -----  ---------  ---------  --------  ---------
-@omsimos/pdf-to-images  1      1.14 ms    1.07 ms    1.14 ms   13.4 KB
-pdfjs-dist              1      5.78 ms    5.77 ms    5.78 ms   7.6 KB
+Library                       Pages  Avg total  P50 total  Avg/page  Avg bytes
+----------------------------  -----  ---------  ---------  --------  ---------
+@omsimos/pdf-to-images        1      1.35 ms    1.08 ms    1.35 ms   13.4 KB
+pdfjs-dist + @napi-rs/canvas  1      5.78 ms    5.78 ms    5.78 ms   7.6 KB
+pdfjs-dist + node-canvas      1      7.15 ms    7.02 ms    7.15 ms   7.8 KB
 
-Relative speed (@omsimos/pdf-to-images vs pdfjs-dist): total 5.07x
-pdfjs backend: pdfjs-dist + @napi-rs/canvas
+Relative speed (@omsimos/pdf-to-images vs pdfjs-dist + @napi-rs/canvas): total 4.27x
+Relative speed (@omsimos/pdf-to-images vs pdfjs-dist + node-canvas): total 5.27x
 ```
 
-On that local run, `@omsimos/pdf-to-images` was roughly `5x–6x` faster than
-`pdfjs-dist` on the included fixtures. Treat those numbers as sample results,
-not universal guarantees.
+On that local run, `@omsimos/pdf-to-images` was roughly `4x–6x` faster than
+both `pdfjs-dist` canvas backends on the included fixtures. Treat those numbers
+as sample results, not universal guarantees.
 
 ## Local development
 
