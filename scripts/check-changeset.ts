@@ -1,13 +1,13 @@
 import { execFileSync } from "node:child_process";
 
-function git(args) {
+function git(args: string[]): string {
   return execFileSync("git", args, {
     cwd: process.cwd(),
     encoding: "utf8",
   }).trim();
 }
 
-function gitOrEmpty(args) {
+function gitOrEmpty(args: string[]): string {
   try {
     return git(args);
   } catch {
@@ -46,11 +46,11 @@ const packageAffectingPrefixes = [
   "core/Cargo.toml",
   "core/package.json",
   "core/build.rs",
-  "scripts/pdfium.mjs",
-  "scripts/bundle-pdfium.mjs",
-  "scripts/publish-packages.mjs",
-  "scripts/stage-pdfium-artifact.mjs",
-  "scripts/copy-pdfium-to-npm.mjs",
+  "scripts/pdfium.ts",
+  "scripts/bundle-pdfium.ts",
+  "scripts/publish-packages.ts",
+  "scripts/stage-pdfium-artifact.ts",
+  "scripts/copy-pdfium-to-npm.ts",
 ];
 
 const packageAffectingChange = changedFiles.some((file) =>

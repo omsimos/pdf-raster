@@ -11,15 +11,16 @@
     "format-and-lint:fix": "biome check . --write",
     "check-types": "turbo run check-types",
     "pdfium:download": "bun run --filter @omsimos/pdf-to-images pdfium:download",
-    "release:check-changeset": "node ./scripts/check-changeset.mjs",
-    "release:publish": "node ./scripts/publish-packages.mjs",
+    "release:check-changeset": "bun ./scripts/check-changeset.ts",
+    "release:publish": "bun ./scripts/publish-packages.ts",
     "version-packages": "changeset version",
     "test": "turbo run test"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.7",
     "@biomejs/biome": "^2.2.4",
+    "@changesets/cli": "^2.29.7",
     "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "^25.3.5",
     "tailwindcss": "^4.1.13",
     "turbo": "^2.8.14",
     "typescript": "5.9.2"

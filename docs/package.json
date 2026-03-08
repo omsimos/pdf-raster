@@ -5,7 +5,7 @@
   "scripts": {
     "check-types": "fumadocs-mdx && next typegen && tsc --noEmit",
     "build": "next build",
-    "clean": "node ../scripts/clean.mjs .next .turbo .source",
+    "clean": "bun ../scripts/clean.ts .next .turbo .source",
     "dev": "next dev --port 3001",
     "start": "next start --port 3001",
     "postinstall": "fumadocs-mdx"

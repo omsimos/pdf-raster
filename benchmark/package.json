@@ -5,7 +5,7 @@
   "scripts": {
     "benchmark": "bun run ./index.ts",
     "check-types": "tsc --noEmit",
-    "clean": "node ../scripts/clean.mjs .turbo"
+    "clean": "bun ../scripts/clean.ts .turbo"
   },
   "dependencies": {
     "@napi-rs/canvas": "^0.1.80",

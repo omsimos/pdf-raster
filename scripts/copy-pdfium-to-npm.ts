@@ -21,9 +21,9 @@ const fileNameByTarget = {
   "linux-x64-gnu": "libpdfium.so",
   "win32-arm64-msvc": "pdfium.dll",
   "win32-x64-msvc": "pdfium.dll",
-};
+} as const;
 
-function walk(dir) {
+function walk(dir: string): string[] {
   const entries = readdirSync(dir, { withFileTypes: true });
   const files = [];
 
@@ -58,7 +58,8 @@ for (const filePath of files) {
   }
 
   const target = match[1];
-  const pdfiumFileName = fileNameByTarget[target];
+  const pdfiumFileName =
+    fileNameByTarget[target as keyof typeof fileNameByTarget];
 
   if (!pdfiumFileName) {
     continue;

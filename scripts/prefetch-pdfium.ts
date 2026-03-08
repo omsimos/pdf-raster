@@ -1,4 +1,4 @@
-import { resolvePdfiumSourcePath } from "./pdfium.mjs";
+import { resolvePdfiumSourcePath } from "./pdfium.ts";
 
 try {
   const pdfiumPath = await resolvePdfiumSourcePath();

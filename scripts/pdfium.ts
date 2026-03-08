@@ -17,7 +17,7 @@ function isMusl() {
   }
 }
 
-function sanitizePathSegment(value) {
+function sanitizePathSegment(value: string): string {
   return value.replaceAll(/[^a-zA-Z0-9._-]+/g, "-");
 }
 
@@ -171,7 +171,11 @@ function getPdfiumDownloadUrl() {
   return `https://github.com/bblanchon/pdfium-binaries/releases/${releasePath}/${target.archiveName}`;
 }
 
-function readNullTerminatedString(buffer, start, length) {
+function readNullTerminatedString(
+  buffer: Buffer,
+  start: number,
+  length: number,
+): string {
   const value = buffer
     .subarray(start, start + length)
     .toString("utf8")
@@ -181,12 +185,15 @@ function readNullTerminatedString(buffer, start, length) {
   return value;
 }
 
-function extractMatchingFileFromTar(tarBuffer, targetFileName) {
+function extractMatchingFileFromTar(
+  tarBuffer: Buffer,
+  targetFileName: string,
+): Buffer {
   let offset = 0;
 
   while (offset + 512 <= tarBuffer.length) {
     const header = tarBuffer.subarray(offset, offset + 512);
-    const isEmptyHeader = header.every((byte) => byte === 0);
+    const isEmptyHeader = header.every((byte: number) => byte === 0);
 
     if (isEmptyHeader) {
       break;
@@ -274,7 +281,7 @@ async function resolvePdfiumSourcePath() {
 }
 
 function getWorkspacePdfiumCandidates() {
-  const packageDir = resolve(repoRoot, "packages", "pdf-to-images");
+  const packageDir = resolve(repoRoot, "core");
   const target = getTargetDescriptor();
   const candidates = [
     join(packageDir, target.targetFileName),

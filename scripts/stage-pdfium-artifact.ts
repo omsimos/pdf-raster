@@ -1,12 +1,12 @@
 import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { getTargetDescriptor, resolvePdfiumSourcePath } from "./pdfium.mjs";
+import { getTargetDescriptor, resolvePdfiumSourcePath } from "./pdfium.ts";
 
 const destination = process.argv[2];
 
 if (!destination) {
-  console.error("Usage: node scripts/stage-pdfium-artifact.mjs <artifact-dir>");
+  console.error("Usage: bun scripts/stage-pdfium-artifact.ts <artifact-dir>");
   process.exit(1);
 }
 

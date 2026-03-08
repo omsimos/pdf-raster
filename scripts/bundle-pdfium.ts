@@ -1,7 +1,7 @@
 import { copyFileSync, existsSync } from "node:fs";
 import { basename, resolve } from "node:path";
 
-import { getTargetDescriptor, resolvePdfiumSourcePath } from "./pdfium.mjs";
+import { getTargetDescriptor, resolvePdfiumSourcePath } from "./pdfium.ts";
 
 const packageDir = process.cwd();
 const { targetFileName } = getTargetDescriptor();

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev --port 3000",
     "build": "next build",
-    "clean": "node ../scripts/clean.mjs .next .turbo",
+    "clean": "bun ../scripts/clean.ts .next .turbo",
     "start": "next start",
     "check-types": "tsc --noEmit",
     "ui:add": "bunx --bun shadcn@latest add"

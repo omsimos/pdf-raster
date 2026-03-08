@@ -7,7 +7,7 @@ const repoRoot = resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 const packageDir = resolve(repoRoot, "core");
 const npmDir = resolve(packageDir, "npm");
 
-function run(command, args, cwd) {
+function run(command: string, args: string[], cwd: string): void {
   execFileSync(command, args, {
     cwd,
     stdio: "inherit",
@@ -15,7 +15,7 @@ function run(command, args, cwd) {
   });
 }
 
-function publishDir(cwd) {
+function publishDir(cwd: string): void {
   try {
     run(
       "npm",

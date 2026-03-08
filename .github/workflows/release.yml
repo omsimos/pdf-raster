@@ -83,7 +83,7 @@ jobs:
             ${{ matrix.build_flags }}
 
       - name: Stage PDFium library
-        run: node scripts/stage-pdfium-artifact.mjs core/artifacts/${{ matrix.platform_arch_abi }}
+        run: bun scripts/stage-pdfium-artifact.ts core/artifacts/${{ matrix.platform_arch_abi }}
         env:
           PDFIUM_TARGET: ${{ matrix.target }}
 

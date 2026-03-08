@@ -3,7 +3,7 @@ import { join, resolve } from "node:path";
 
 const patterns = process.argv.slice(2);
 
-function matches(name, pattern) {
+function matches(name: string, pattern: string): boolean {
   if (pattern.startsWith("*.")) {
     return name.endsWith(pattern.slice(1));
   }
@@ -11,7 +11,7 @@ function matches(name, pattern) {
   return name === pattern;
 }
 
-function removeTarget(targetPath) {
+function removeTarget(targetPath: string): void {
   if (!existsSync(targetPath)) {
     return;
   }
