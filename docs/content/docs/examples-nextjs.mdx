@@ -1,12 +1,16 @@
 ---
 title: Next.js route handler example
-description: Use the package inside a Node.js route handler and return image data to the client.
+description: The smallest correct Next.js server-side pattern for converting PDFs inside App Router.
 ---
 
 <Callout type="warning" title="Node runtime only">
   Keep this package in a Node.js route handler or other server-only code. Do
   not import it into the client or Edge runtime.
 </Callout>
+
+This page shows only the server route. If you also want a client upload form
+and a preview grid that renders every returned page image, use the
+[full Next.js upload and preview example](/docs/examples-nextjs-full-flow).
 
 ## Example route handler
 
@@ -75,6 +79,13 @@ export async function POST(request: Request) {
 }
 ```
 
+This route shape is useful when:
+
+- your frontend is already built and only needs an API endpoint
+- you want to keep the native package isolated to one server route
+- you plan to return small preview payloads, object-storage URLs, or other
+  app-specific response shapes
+
 ## Why a route handler works well
 
 - keeps the native binding on the server
@@ -88,3 +99,7 @@ export async function POST(request: Request) {
   or another server-side reference instead of base64-encoding every page into
   JSON.
 </Callout>
+
+If you want to see the matching client page that uploads a PDF and renders the
+returned images, continue to the
+[full Next.js upload and preview example](/docs/examples-nextjs-full-flow).

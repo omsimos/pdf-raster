@@ -15,6 +15,7 @@
     "example-patterns",
     "examples-node",
     "examples-nextjs",
+    "examples-nextjs-full-flow",
     "examples-ocr-vlm"
   ]
 }

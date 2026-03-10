@@ -10,7 +10,10 @@ Use this page as an index to the most common ways teams integrate the library.
     File-path conversion, in-memory buffers, and selected-page usage.
   </Card>
   <Card title="Next.js route handlers" href="/docs/examples-nextjs">
-    Keep conversion server-side and return image payloads safely.
+    The smallest correct server-side pattern for App Router APIs.
+  </Card>
+  <Card title="Next.js upload + preview" href="/docs/examples-nextjs-full-flow">
+    Add a client upload form, call a route handler, and render every page image.
   </Card>
   <Card title="Downstream integrations" href="/docs/examples-ocr-vlm">
     Pass rendered page images into OCR, AI SDK image prompts, or other consumers.
@@ -28,8 +31,9 @@ Use this page as an index to the most common ways teams integrate the library.
     Use the in-memory buffer pattern so you can keep everything off disk.
   </Accordion>
   <Accordion title="I need to expose this behind a web UI">
-    Use a server route or route handler. Keep the native package out of client
-    bundles.
+    Start with the route-handler example if you only need the server API. Use
+    the full Next.js upload-and-preview example if you also need a client page
+    that renders every returned image.
   </Accordion>
   <Accordion title="I need smaller preview payloads">
     Keep PNG as the default when quality matters most. Use WebP or JPEG when
