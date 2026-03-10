@@ -44,53 +44,21 @@ type LoadedBinding = {
   pdfiumPath?: string;
 };
 
-type TargetBindingDescriptor = {
-  localBinary: string;
-  packageName: string;
-};
-
 const require = createRequire(import.meta.url);
+const dynamicRequire = new Function(
+  "loader",
+  "specifier",
+  "return loader(specifier)",
+) as (loader: NodeJS.Require, specifier: string) => unknown;
+const dynamicRequireResolve = new Function(
+  "loader",
+  "specifier",
+  "return loader.resolve(specifier)",
+) as (loader: NodeJS.Require, specifier: string) => string;
 const here = dirname(fileURLToPath(import.meta.url));
 const packageRoot = join(here, "..");
 const workspaceRoot = resolve(packageRoot, "..", "..");
 const loadErrors: unknown[] = [];
-const TARGET_BINDINGS: Partial<
-  Record<
-    NodeJS.Platform,
-    Partial<Record<NodeJS.Architecture, TargetBindingDescriptor>>
-  >
-> = {
-  darwin: {
-    arm64: {
-      localBinary: "../pdf-raster.darwin-arm64.node",
-      packageName: "@omsimos/pdf-raster-darwin-arm64",
-    },
-    x64: {
-      localBinary: "../pdf-raster.darwin-x64.node",
-      packageName: "@omsimos/pdf-raster-darwin-x64",
-    },
-  },
-  linux: {
-    arm64: {
-      localBinary: "../pdf-raster.linux-arm64-gnu.node",
-      packageName: "@omsimos/pdf-raster-linux-arm64-gnu",
-    },
-    x64: {
-      localBinary: "../pdf-raster.linux-x64-gnu.node",
-      packageName: "@omsimos/pdf-raster-linux-x64-gnu",
-    },
-  },
-  win32: {
-    arm64: {
-      localBinary: "../pdf-raster.win32-arm64-msvc.node",
-      packageName: "@omsimos/pdf-raster-win32-arm64-msvc",
-    },
-    x64: {
-      localBinary: "../pdf-raster.win32-x64-msvc.node",
-      packageName: "@omsimos/pdf-raster-win32-x64-msvc",
-    },
-  },
-};
 
 function isMusl(): boolean {
   if (process.platform !== "linux") {
@@ -198,32 +166,133 @@ function resolvePdfiumPathFromModule(
   return candidates.find((candidate) => existsSync(candidate));
 }
 
-function requireBinding(specifier: string): LoadedBinding | null {
+function loadBinding(
+  specifier: string,
+  load: () => unknown,
+  resolveSpecifier: () => string,
+): LoadedBinding | null {
   try {
-    const resolvedSpecifier = require.resolve(specifier);
+    const resolvedSpecifier = resolveSpecifier();
     return {
-      binding: require(resolvedSpecifier) as NativeBinding,
+      binding: load() as NativeBinding,
       pdfiumPath: resolvePdfiumPathFromModule(resolvedSpecifier),
     };
   } catch (error) {
-    loadErrors.push(error);
+    loadErrors.push(
+      error instanceof Error
+        ? new Error(`${specifier}: ${error.message}`)
+        : error,
+    );
     return null;
   }
 }
 
-function getTargetBinding(): TargetBindingDescriptor | null {
-  return TARGET_BINDINGS[process.platform]?.[process.arch] ?? null;
+function loadRuntimeBinding(specifier: string): LoadedBinding | null {
+  return loadBinding(
+    specifier,
+    () => dynamicRequire(require, specifier),
+    () => dynamicRequireResolve(require, specifier),
+  );
+}
+
+function loadExplicitBinding(): LoadedBinding | null {
+  const explicitPath = process.env.NAPI_RS_NATIVE_LIBRARY_PATH;
+  if (!explicitPath) {
+    return null;
+  }
+
+  return loadRuntimeBinding(explicitPath);
+}
+
+function requireLocalDarwinArm64() {
+  return loadRuntimeBinding("../pdf-raster.darwin-arm64.node");
+}
+
+function requirePackageDarwinArm64() {
+  return loadRuntimeBinding("@omsimos/pdf-raster-darwin-arm64");
+}
+
+function requireLocalDarwinX64() {
+  return loadRuntimeBinding("../pdf-raster.darwin-x64.node");
+}
+
+function requirePackageDarwinX64() {
+  return loadRuntimeBinding("@omsimos/pdf-raster-darwin-x64");
+}
+
+function requireLocalLinuxArm64() {
+  return loadRuntimeBinding("../pdf-raster.linux-arm64-gnu.node");
+}
+
+function requirePackageLinuxArm64() {
+  return loadRuntimeBinding("@omsimos/pdf-raster-linux-arm64-gnu");
+}
+
+function requireLocalLinuxX64() {
+  return loadRuntimeBinding("../pdf-raster.linux-x64-gnu.node");
+}
+
+function requirePackageLinuxX64() {
+  return loadRuntimeBinding("@omsimos/pdf-raster-linux-x64-gnu");
+}
+
+function requireLocalWin32Arm64() {
+  return loadRuntimeBinding("../pdf-raster.win32-arm64-msvc.node");
+}
+
+function requirePackageWin32Arm64() {
+  return loadRuntimeBinding("@omsimos/pdf-raster-win32-arm64-msvc");
+}
+
+function requireLocalWin32X64() {
+  return loadRuntimeBinding("../pdf-raster.win32-x64-msvc.node");
+}
+
+function requirePackageWin32X64() {
+  return loadRuntimeBinding("@omsimos/pdf-raster-win32-x64-msvc");
+}
+
+function loadTargetBinding(): LoadedBinding | null {
+  switch (process.platform) {
+    case "darwin":
+      switch (process.arch) {
+        case "arm64":
+          return requireLocalDarwinArm64() ?? requirePackageDarwinArm64();
+        case "x64":
+          return requireLocalDarwinX64() ?? requirePackageDarwinX64();
+        default:
+          return null;
+      }
+    case "linux":
+      switch (process.arch) {
+        case "arm64":
+          return requireLocalLinuxArm64() ?? requirePackageLinuxArm64();
+        case "x64":
+          return requireLocalLinuxX64() ?? requirePackageLinuxX64();
+        default:
+          return null;
+      }
+    case "win32":
+      switch (process.arch) {
+        case "arm64":
+          return requireLocalWin32Arm64() ?? requirePackageWin32Arm64();
+        case "x64":
+          return requireLocalWin32X64() ?? requirePackageWin32X64();
+        default:
+          return null;
+      }
+    default:
+      return null;
+  }
 }
 
 function loadNativeBinding(): LoadedBinding {
   ensureBundledPdfiumPath();
 
-  if (process.env.NAPI_RS_NATIVE_LIBRARY_PATH) {
-    const explicit = requireBinding(process.env.NAPI_RS_NATIVE_LIBRARY_PATH);
-    if (explicit) {
-      setPdfiumLibraryPath(explicit.pdfiumPath);
-      return explicit;
-    }
+  const explicit = loadExplicitBinding();
+  if (explicit) {
+    setPdfiumLibraryPath(explicit.pdfiumPath);
+    return explicit;
   }
 
   if (process.platform === "linux") {
@@ -234,13 +303,8 @@ function loadNativeBinding(): LoadedBinding {
     }
   }
 
-  const targetBinding = getTargetBinding();
-  if (targetBinding) {
-    const loaded =
-      requireBinding(targetBinding.localBinary) ??
-      requireBinding(targetBinding.packageName) ??
-      failToLoad();
-
+  const loaded = loadTargetBinding();
+  if (loaded) {
     setPdfiumLibraryPath(loaded.pdfiumPath);
     return loaded;
   }
