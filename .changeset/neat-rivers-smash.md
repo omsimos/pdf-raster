@@ -1,10 +1,9 @@
 ---
-"@omsimos/pdf-raster": minor
+"@omsimos/pdf-raster": patch
 ---
 
-First public release of `@omsimos/pdf-raster`.
+Fix the published native loader for Next.js and Turbopack server routes.
 
-Ship the native PDF rasterization package for Node.js and Bun with prebuilt
-platform packages, bundled PDFium libraries, hosted documentation, benchmark
-coverage, and the initial Changesets/GitHub Actions release pipeline for npm
-publishing with provenance.
+The package now resolves its platform binding at runtime without triggering the
+`Cannot find module as expression is too dynamic` failure in published
+Next.js consumers.
