@@ -9,11 +9,34 @@ const npmDir = resolve(packageDir, "npm");
 const publishWithProvenance = process.env.NPM_PUBLISH_PROVENANCE === "true";
 
 function run(command: string, args: string[], cwd: string): void {
-  execFileSync(command, args, {
+  const output = execFileSync(command, args, {
     cwd,
-    stdio: "inherit",
+    stdio: ["inherit", "pipe", "pipe"],
     env: process.env,
   });
+
+  if (output.length > 0) {
+    process.stdout.write(output);
+  }
+}
+
+function getErrorOutput(error: unknown): string {
+  if (!(error instanceof Error)) {
+    return String(error);
+  }
+
+  const withStreams = error as Error & {
+    stdout?: Buffer | string;
+    stderr?: Buffer | string;
+  };
+
+  return [
+    error.message,
+    withStreams.stdout ? String(withStreams.stdout) : "",
+    withStreams.stderr ? String(withStreams.stderr) : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function publishDir(cwd: string): void {
@@ -25,10 +48,13 @@ function publishDir(cwd: string): void {
 
     run("npm", args, cwd);
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+    const message = getErrorOutput(error);
     if (
       message.includes("previously published versions") ||
-      message.includes("cannot publish over the previously published version")
+      message.includes(
+        "cannot publish over the previously published version",
+      ) ||
+      message.includes("cannot publish over the previously published versions")
     ) {
       console.warn(`Skipping already published package in ${cwd}`);
       return;
