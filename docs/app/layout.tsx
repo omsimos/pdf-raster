@@ -3,6 +3,7 @@ import { RootProvider } from "fumadocs-ui/provider/next";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://pdf-raster.omsimos.com"),
   title: {
     default: "omsimos/pdf-raster",
     template: "%s | omsimos/pdf-raster",

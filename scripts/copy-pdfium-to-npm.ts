@@ -23,6 +23,10 @@ const fileNameByTarget = {
   "win32-x64-msvc": "pdfium.dll",
 } as const;
 
+const requireAllTargets =
+  process.env.REQUIRE_ALL_PDFIUM_ARTIFACTS === "true" ||
+  process.env.GITHUB_ACTIONS === "true";
+
 function walk(dir: string): string[] {
   const entries = readdirSync(dir, { withFileTypes: true });
   const files = [];
@@ -89,10 +93,16 @@ for (const filePath of files) {
 }
 
 for (const target of Object.keys(fileNameByTarget)) {
-  if (!copiedTargets.has(target)) {
+  if (copiedTargets.has(target)) {
+    continue;
+  }
+
+  if (requireAllTargets) {
     console.error(`Missing PDFium artifact for ${target}`);
     process.exit(1);
   }
+
+  console.warn(`Skipping PDFium copy for missing local target: ${target}`);
 }
 
 console.log(
