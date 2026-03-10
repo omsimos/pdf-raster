@@ -1,7 +1,10 @@
 ---
-"@omsimos/pdf-raster": patch
+"@omsimos/pdf-raster": minor
 ---
 
-Set up Changesets and GitHub Actions release publishing for npm, including
-platform package preparation, npm provenance publishing, and loader alignment
-for the first supported prebuilt target matrix.
+First public release of `@omsimos/pdf-raster`.
+
+Ship the native PDF rasterization package for Node.js and Bun with prebuilt
+platform packages, bundled PDFium libraries, hosted documentation, benchmark
+coverage, and the initial Changesets/GitHub Actions release pipeline for npm
+publishing with provenance.

@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 const repoRoot = resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 const packageDir = resolve(repoRoot, "core");
 const npmDir = resolve(packageDir, "npm");
+const publishWithProvenance = process.env.NPM_PUBLISH_PROVENANCE === "true";
 
 function run(command: string, args: string[], cwd: string): void {
   execFileSync(command, args, {
@@ -17,11 +18,12 @@ function run(command: string, args: string[], cwd: string): void {
 
 function publishDir(cwd: string): void {
   try {
-    run(
-      "npm",
-      ["publish", "--access", "public", "--provenance", "--ignore-scripts"],
-      cwd,
-    );
+    const args = ["publish", "--access", "public", "--ignore-scripts"];
+    if (publishWithProvenance) {
+      args.push("--provenance");
+    }
+
+    run("npm", args, cwd);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     if (

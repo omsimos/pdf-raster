@@ -39,6 +39,11 @@ type NativeBinding = {
   ): Promise<ConvertedPage[]>;
 };
 
+type LoadedBinding = {
+  binding: NativeBinding;
+  pdfiumPath?: string;
+};
+
 type TargetBindingDescriptor = {
   localBinary: string;
   packageName: string;
@@ -113,6 +118,14 @@ function isMusl(): boolean {
   }
 }
 
+function setPdfiumLibraryPath(path: string | undefined): void {
+  if (!path || process.env.PDFIUM_LIB_PATH) {
+    return;
+  }
+
+  process.env.PDFIUM_LIB_PATH = path;
+}
+
 function ensureBundledPdfiumPath(): void {
   if (process.env.PDFIUM_LIB_PATH) {
     return;
@@ -121,9 +134,7 @@ function ensureBundledPdfiumPath(): void {
   const candidates = getPdfiumCandidates();
 
   const bundled = candidates.find((candidate) => existsSync(candidate));
-  if (bundled) {
-    process.env.PDFIUM_LIB_PATH = bundled;
-  }
+  setPdfiumLibraryPath(bundled);
 }
 
 function getBundledPdfiumPath(): string | undefined {
@@ -174,9 +185,26 @@ function getPdfiumCandidates(): string[] {
   ];
 }
 
-function requireBinding(specifier: string): NativeBinding | null {
+function resolvePdfiumPathFromModule(
+  resolvedModulePath: string,
+): string | undefined {
+  const moduleDir = dirname(resolvedModulePath);
+  const fileName = getPdfiumFileName();
+  const candidates = [
+    join(moduleDir, fileName),
+    join(moduleDir, "lib", fileName),
+  ];
+
+  return candidates.find((candidate) => existsSync(candidate));
+}
+
+function requireBinding(specifier: string): LoadedBinding | null {
   try {
-    return require(specifier) as NativeBinding;
+    const resolvedSpecifier = require.resolve(specifier);
+    return {
+      binding: require(resolvedSpecifier) as NativeBinding,
+      pdfiumPath: resolvePdfiumPathFromModule(resolvedSpecifier),
+    };
   } catch (error) {
     loadErrors.push(error);
     return null;
@@ -187,12 +215,13 @@ function getTargetBinding(): TargetBindingDescriptor | null {
   return TARGET_BINDINGS[process.platform]?.[process.arch] ?? null;
 }
 
-function loadNativeBinding(): NativeBinding {
+function loadNativeBinding(): LoadedBinding {
   ensureBundledPdfiumPath();
 
   if (process.env.NAPI_RS_NATIVE_LIBRARY_PATH) {
     const explicit = requireBinding(process.env.NAPI_RS_NATIVE_LIBRARY_PATH);
     if (explicit) {
+      setPdfiumLibraryPath(explicit.pdfiumPath);
       return explicit;
     }
   }
@@ -207,11 +236,13 @@ function loadNativeBinding(): NativeBinding {
 
   const targetBinding = getTargetBinding();
   if (targetBinding) {
-    return (
+    const loaded =
       requireBinding(targetBinding.localBinary) ??
       requireBinding(targetBinding.packageName) ??
-      failToLoad()
-    );
+      failToLoad();
+
+    setPdfiumLibraryPath(loaded.pdfiumPath);
+    return loaded;
   }
 
   return failToLoad();
@@ -226,7 +257,12 @@ function failToLoad(): never {
   );
 }
 
-export const nativeBinding = loadNativeBinding();
-export const bundledPdfiumPath = getBundledPdfiumPath();
+const loadedBinding = loadNativeBinding();
+
+export const nativeBinding = loadedBinding.binding;
+export const bundledPdfiumPath =
+  process.env.PDFIUM_LIB_PATH ??
+  loadedBinding.pdfiumPath ??
+  getBundledPdfiumPath();
 
 export type { NativeBinding, NativeConvertOptions };

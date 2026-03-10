@@ -35,6 +35,14 @@
         "@types/node": "^22.15.3",
         "typescript": "5.9.2",
       },
+      "optionalDependencies": {
+        "@omsimos/pdf-raster-darwin-arm64": "0.1.0",
+        "@omsimos/pdf-raster-darwin-x64": "0.1.0",
+        "@omsimos/pdf-raster-linux-arm64-gnu": "0.1.0",
+        "@omsimos/pdf-raster-linux-x64-gnu": "0.1.0",
+        "@omsimos/pdf-raster-win32-arm64-msvc": "0.1.0",
+        "@omsimos/pdf-raster-win32-x64-msvc": "0.1.0",
+      },
     },
     "docs": {
       "name": "docs",

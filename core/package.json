@@ -52,7 +52,7 @@
     "build:native:debug": "napi build --platform",
     "create-npm-dirs": "napi create-npm-dirs --npm-dir npm",
     "collect-npm-artifacts": "napi artifacts --output-dir artifacts --npm-dir npm",
-    "prepare-npm-packages": "bun run create-npm-dirs && bun run collect-npm-artifacts && bun ../scripts/copy-pdfium-to-npm.ts && napi prepublish --npm-dir npm --gh-release=false --skip-optional-publish",
+    "prepare-npm-packages": "bun ../scripts/stage-local-artifact.ts && bun run create-npm-dirs && bun run collect-npm-artifacts && bun ../scripts/copy-pdfium-to-npm.ts && napi prepublish --npm-dir npm --skip-optional-publish",
     "bundle:pdfium": "bun ../scripts/bundle-pdfium.ts",
     "clean": "bun ../scripts/clean.ts .turbo artifacts dist npm target '*.node' '*.so' '*.dylib' '*.dll'",
     "check-types": "tsc --noEmit",
@@ -60,7 +60,7 @@
     "test": "bun run build && bun run test:bun && bun run test:node",
     "test:bun": "bun test ./test",
     "test:node": "bun ./test/node-smoke.ts",
-    "prepublishOnly": "bun run build && bun run create-npm-dirs && napi prepublish --npm-dir npm --gh-release=false --skip-optional-publish"
+    "prepublishOnly": "bun run build && bun run prepare-npm-packages"
   },
   "keywords": [
     "pdf",
@@ -77,5 +77,13 @@
     "@napi-rs/cli": "^3.4.0",
     "@types/node": "^22.15.3",
     "typescript": "5.9.2"
+  },
+  "optionalDependencies": {
+    "@omsimos/pdf-raster-darwin-x64": "0.1.0",
+    "@omsimos/pdf-raster-darwin-arm64": "0.1.0",
+    "@omsimos/pdf-raster-linux-x64-gnu": "0.1.0",
+    "@omsimos/pdf-raster-linux-arm64-gnu": "0.1.0",
+    "@omsimos/pdf-raster-win32-x64-msvc": "0.1.0",
+    "@omsimos/pdf-raster-win32-arm64-msvc": "0.1.0"
   }
 }

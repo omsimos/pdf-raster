@@ -27,20 +27,17 @@ export default function HomePage() {
         <section className="docs-lab-shell rounded-[2rem] p-6 md:p-8">
           <div className="flex flex-col gap-8">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="max-w-3xl space-y-4">
-                <p className="docs-lab-kicker">omsimos / documentation</p>
-                <div className="space-y-3">
-                  <p className="docs-lab-label">Native PDF rasterization</p>
-                  <h1 className="max-w-4xl text-4xl leading-[1.08] font-semibold tracking-[-0.08em] text-fd-foreground md:text-6xl md:leading-[1.02]">
-                    Documentation for a fast, minimal PDF-to-images primitive.
-                  </h1>
-                  <p className="max-w-2xl text-base leading-7 text-fd-muted-foreground md:text-lg">
-                    @omsimos/pdf-raster is a native PDF-to-images library for
-                    Node.js and Bun. It turns PDFs into encoded page images
-                    through a small server-side API for backend and document
-                    workflows.
-                  </p>
-                </div>
+              <div className="space-y-3">
+                <p className="docs-lab-kicker">Native PDF rasterization</p>
+                <h1 className="max-w-4xl text-4xl leading-[1.08] font-semibold tracking-[-0.08em] text-fd-foreground md:text-6xl md:leading-[1.02]">
+                  PDF Raster
+                </h1>
+                <p className="max-w-2xl text-base leading-7 text-fd-muted-foreground md:text-lg">
+                  @omsimos/pdf-raster is a native PDF-to-images library for
+                  Node.js and Bun. It turns PDFs into encoded page images
+                  through a small server-side API for backend and document
+                  workflows.
+                </p>
               </div>
 
               <div className="docs-lab-stat min-w-[180px] rounded-3xl p-4">
@@ -60,7 +57,7 @@ export default function HomePage() {
                 href="/docs"
                 className="inline-flex items-center rounded-full border border-[var(--docs-lab-accent)] bg-[var(--docs-lab-accent)] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:opacity-90"
               >
-                Get started
+                Documentation
               </Link>
               <Link
                 href="/docs/benchmark"
