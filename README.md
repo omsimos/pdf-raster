@@ -133,6 +133,14 @@ This repository is a Bun + Turborepo monorepo.
 4. **Test:** `bun run test`
 5. **Benchmark:** `bun run benchmark`
 
+### Workspace layout
+
+- `core/` - the published `@omsimos/pdf-raster` package
+- `example/` - the polished internal demo app using the local workspace package
+- `consumer/` - a minimal Next.js app for validating the published npm package
+- `docs/` - the hosted documentation source
+- `benchmark/` - internal performance comparisons against `pdfjs-dist`
+
 ## 📄 License
 
 MIT

@@ -573,6 +573,18 @@
 
     "@omsimos/pdf-raster": ["@omsimos/pdf-raster@workspace:core"],
 
+    "@omsimos/pdf-raster-darwin-arm64": ["@omsimos/pdf-raster-darwin-arm64@0.1.0", "", { "os": "darwin", "cpu": "arm64" }, "sha512-uu+E2UjVlZOundjLT1t4Z70/r7XNIac9j7LxXp77uVIZPTa2wzvCX6XKuIMWO5qLDWqqq39Pw3w26m+oZvhxGA=="],
+
+    "@omsimos/pdf-raster-darwin-x64": ["@omsimos/pdf-raster-darwin-x64@0.1.0", "", { "os": "darwin", "cpu": "x64" }, "sha512-KGw01+qhQARfTltpLk54XFdvaDf+HKqSx7fSfIAnvxjLKASjDA6YQjjX79aXqShWO0zgO2XQ8cfpYvLElbyUZQ=="],
+
+    "@omsimos/pdf-raster-linux-arm64-gnu": ["@omsimos/pdf-raster-linux-arm64-gnu@0.1.0", "", { "os": "linux", "cpu": "arm64" }, "sha512-23PTj4JxOyOwfQzJcuuBQPacKedKg8O4e4LwSm7GAzijVKfLZliQaxAoXvX2UW4A0IsDethCw3VohDixH2qpgw=="],
+
+    "@omsimos/pdf-raster-linux-x64-gnu": ["@omsimos/pdf-raster-linux-x64-gnu@0.1.0", "", { "os": "linux", "cpu": "x64" }, "sha512-vF4ae9Q5dV9e/18ysT/SPlRQ6BKdwKvE7+YiNKJaegDtMnMNoGsxlfJrl5Xg+ydbGkoDf+7zTW/pS7yT5QtPhQ=="],
+
+    "@omsimos/pdf-raster-win32-arm64-msvc": ["@omsimos/pdf-raster-win32-arm64-msvc@0.1.0", "", { "os": "win32", "cpu": "arm64" }, "sha512-3/DCN0PxqbsnHsGbvTIb7UdSdJlh9NvcDBGlIdhUR4AJzAyyKLeb5qYDe7Zo5f6TTu3REY3zWnMa9FRExRn09A=="],
+
+    "@omsimos/pdf-raster-win32-x64-msvc": ["@omsimos/pdf-raster-win32-x64-msvc@0.1.0", "", { "os": "win32", "cpu": "x64" }, "sha512-USaU8OlxaNxvFfPR/YHbfa+A1JA1Ygc0qvFcYaF16Tomq9UY/h5Qrwl4hAV4YbWRZgN7/oNf/45nEYexrpOUyw=="],
+
     "@open-draft/deferred-promise": ["@open-draft/deferred-promise@2.2.0", "", {}, "sha512-CecwLWx3rhxVQF6V4bAgPS5t+So2sTbPgAzafKkVizyi7tlwpcFpdFqq+wqF2OwNBmqFuu6tOyouTuxgpMfzmA=="],
 
     "@open-draft/logger": ["@open-draft/logger@0.3.0", "", { "dependencies": { "is-node-process": "^1.2.0", "outvariant": "^1.4.0" } }, "sha512-X2g45fzhxH238HKO4xbSr7+wBS8Fvw6ixhTDuvLd5mqh6bJJCFAPwU9mPDxbcrRtfxv4u5IHCEH77BmxvXmmxQ=="],
