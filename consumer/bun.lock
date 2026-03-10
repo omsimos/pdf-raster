@@ -5,7 +5,7 @@
     "": {
       "name": "consumer",
       "dependencies": {
-        "@omsimos/pdf-raster": "0.1.0",
+        "@omsimos/pdf-raster": "^0.1.1",
         "next": "16.1.5",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
@@ -89,19 +89,19 @@
 
     "@next/swc-win32-x64-msvc": ["@next/swc-win32-x64-msvc@16.1.5", "", { "os": "win32", "cpu": "x64" }, "sha512-7is37HJTNQGhjPpQbkKjKEboHYQnCgpVt/4rBrrln0D9nderNxZ8ZWs8w1fAtzUx7wEyYjQ+/13myFgFj6K2Ng=="],
 
-    "@omsimos/pdf-raster": ["@omsimos/pdf-raster@0.1.0", "", { "optionalDependencies": { "@omsimos/pdf-raster-darwin-arm64": "0.1.0", "@omsimos/pdf-raster-darwin-x64": "0.1.0", "@omsimos/pdf-raster-linux-arm64-gnu": "0.1.0", "@omsimos/pdf-raster-linux-x64-gnu": "0.1.0", "@omsimos/pdf-raster-win32-arm64-msvc": "0.1.0", "@omsimos/pdf-raster-win32-x64-msvc": "0.1.0" } }, "sha512-JFMYsIFqvmhSy9/1gbdbZbf5AJxg+q9HsviMRcy4FT98rv1ZtxzYYX7q1aDrnvfKi0waTVqcyolxJRfBcoD6zg=="],
+    "@omsimos/pdf-raster": ["@omsimos/pdf-raster@0.1.1", "", { "optionalDependencies": { "@omsimos/pdf-raster-darwin-arm64": "0.1.1", "@omsimos/pdf-raster-darwin-x64": "0.1.1", "@omsimos/pdf-raster-linux-arm64-gnu": "0.1.1", "@omsimos/pdf-raster-linux-x64-gnu": "0.1.1", "@omsimos/pdf-raster-win32-arm64-msvc": "0.1.1", "@omsimos/pdf-raster-win32-x64-msvc": "0.1.1" } }, "sha512-3dvOA4nHInHMoKbCeOng+W2p06pFxPpI0UQgZhrZ4Cnpl7WRKAn3A2lxz7PCTGnXD53jc110iuYRXek7c/9Rag=="],
 
-    "@omsimos/pdf-raster-darwin-arm64": ["@omsimos/pdf-raster-darwin-arm64@0.1.0", "", { "os": "darwin", "cpu": "arm64" }, "sha512-uu+E2UjVlZOundjLT1t4Z70/r7XNIac9j7LxXp77uVIZPTa2wzvCX6XKuIMWO5qLDWqqq39Pw3w26m+oZvhxGA=="],
+    "@omsimos/pdf-raster-darwin-arm64": ["@omsimos/pdf-raster-darwin-arm64@0.1.1", "", { "os": "darwin", "cpu": "arm64" }, "sha512-icOMvhQZKAg9aWG9BNSxY9KKO3dd3d6WUBw0gXg4QV4FMDD0dtSAl1iF+JXAdsVeGX5+DBIYh0JMf/N61ttY+w=="],
 
-    "@omsimos/pdf-raster-darwin-x64": ["@omsimos/pdf-raster-darwin-x64@0.1.0", "", { "os": "darwin", "cpu": "x64" }, "sha512-KGw01+qhQARfTltpLk54XFdvaDf+HKqSx7fSfIAnvxjLKASjDA6YQjjX79aXqShWO0zgO2XQ8cfpYvLElbyUZQ=="],
+    "@omsimos/pdf-raster-darwin-x64": ["@omsimos/pdf-raster-darwin-x64@0.1.1", "", { "os": "darwin", "cpu": "x64" }, "sha512-c7KV87A6b4Z/YVzwiDeF+nWhJbgy7Wg8H6Xy3MppPDjFdXRIkWJqzVu5b2PiDApqmzvhicOZzk8c2NJs94uDUQ=="],
 
-    "@omsimos/pdf-raster-linux-arm64-gnu": ["@omsimos/pdf-raster-linux-arm64-gnu@0.1.0", "", { "os": "linux", "cpu": "arm64" }, "sha512-23PTj4JxOyOwfQzJcuuBQPacKedKg8O4e4LwSm7GAzijVKfLZliQaxAoXvX2UW4A0IsDethCw3VohDixH2qpgw=="],
+    "@omsimos/pdf-raster-linux-arm64-gnu": ["@omsimos/pdf-raster-linux-arm64-gnu@0.1.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-tSWqGsRFWsmj4eU3gUKzqwJ0nGPhFWU8GCB5EgegBGsfP6zUqeliN2GXR6h/GLia86okq4V/8f01p7aPE5bhxQ=="],
 
-    "@omsimos/pdf-raster-linux-x64-gnu": ["@omsimos/pdf-raster-linux-x64-gnu@0.1.0", "", { "os": "linux", "cpu": "x64" }, "sha512-vF4ae9Q5dV9e/18ysT/SPlRQ6BKdwKvE7+YiNKJaegDtMnMNoGsxlfJrl5Xg+ydbGkoDf+7zTW/pS7yT5QtPhQ=="],
+    "@omsimos/pdf-raster-linux-x64-gnu": ["@omsimos/pdf-raster-linux-x64-gnu@0.1.1", "", { "os": "linux", "cpu": "x64" }, "sha512-UXKB2W/NfZbla/X+JEWCBl6Na9LBnr47q9sJSTSy7H7P436dFtlFRwcEA26SCOzF8Hvpkohatq2oy26Wx9FbLA=="],
 
-    "@omsimos/pdf-raster-win32-arm64-msvc": ["@omsimos/pdf-raster-win32-arm64-msvc@0.1.0", "", { "os": "win32", "cpu": "arm64" }, "sha512-3/DCN0PxqbsnHsGbvTIb7UdSdJlh9NvcDBGlIdhUR4AJzAyyKLeb5qYDe7Zo5f6TTu3REY3zWnMa9FRExRn09A=="],
+    "@omsimos/pdf-raster-win32-arm64-msvc": ["@omsimos/pdf-raster-win32-arm64-msvc@0.1.1", "", { "os": "win32", "cpu": "arm64" }, "sha512-fbXzerPZAAuKKUHwtsel2wut/hgkus03/+Lzal5iCQHY1lVlbawfaeg+tAw0+/ASUyHa8e1JFw8aWJti3y8Vpg=="],
 
-    "@omsimos/pdf-raster-win32-x64-msvc": ["@omsimos/pdf-raster-win32-x64-msvc@0.1.0", "", { "os": "win32", "cpu": "x64" }, "sha512-USaU8OlxaNxvFfPR/YHbfa+A1JA1Ygc0qvFcYaF16Tomq9UY/h5Qrwl4hAV4YbWRZgN7/oNf/45nEYexrpOUyw=="],
+    "@omsimos/pdf-raster-win32-x64-msvc": ["@omsimos/pdf-raster-win32-x64-msvc@0.1.1", "", { "os": "win32", "cpu": "x64" }, "sha512-klUKbJ7pG8KWGJMjQKnqcvHKcNhQHE6Oyi2Gn4wQ+dgZ3/BXrsNUV3UQOMKPyeMwcjsCBCEpzVlvNKWTZgnLNw=="],
 
     "@swc/helpers": ["@swc/helpers@0.5.15", "", { "dependencies": { "tslib": "^2.8.0" } }, "sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g=="],
 
