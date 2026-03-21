@@ -5,11 +5,11 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   metadataBase: new URL("https://pdf-raster.omsimos.com"),
   title: {
-    default: "omsimos/pdf-raster",
-    template: "%s | omsimos/pdf-raster",
+    default: "joshxfi/pdf-raster",
+    template: "%s | joshxfi/pdf-raster",
   },
   description:
-    "Documentation for @omsimos/pdf-raster, a native PDF to images library for backend and document workflows.",
+    "Documentation for pdf-raster, a native PDF to images library for backend and document workflows.",
 };
 
 export default function Layout({ children }: LayoutProps<"/">) {

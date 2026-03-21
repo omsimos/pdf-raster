@@ -18,7 +18,7 @@
     "incremental": true,
     "paths": {
       "@/*": ["./*"],
-      "@omsimos/pdf-raster": ["../core/src/index.ts"]
+      "pdf-raster": ["../core/src/index.ts"]
     },
     "plugins": [
       {

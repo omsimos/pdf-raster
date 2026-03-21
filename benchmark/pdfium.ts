@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import type { BenchOptions, BenchRunResult } from "./types";
 
-type PdfToImagesModule = typeof import("@omsimos/pdf-raster");
+type PdfToImagesModule = typeof import("pdf-raster");
 
 const runtimeImport = new Function("specifier", "return import(specifier)") as <
   T,
@@ -91,7 +91,7 @@ async function ensureCoreBuilt(): Promise<void> {
 
 async function loadPdfToImages(): Promise<PdfToImagesModule> {
   await ensureCoreBuilt();
-  return runtimeImport<PdfToImagesModule>("@omsimos/pdf-raster");
+  return runtimeImport<PdfToImagesModule>("pdf-raster");
 }
 
 function getMimeType(outputFormat: BenchOptions["outputFormat"]): string {
@@ -136,7 +136,7 @@ export async function runPdfiumBenchmark(
   );
 
   return {
-    library: "@omsimos/pdf-raster",
+    library: "pdf-raster",
     backend: "public convert() API",
     pageCount: pages.length,
     dpi: options.dpi,

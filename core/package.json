@@ -1,17 +1,17 @@
 {
-  "name": "@omsimos/pdf-raster",
-  "version": "0.1.1",
+  "name": "pdf-raster",
+  "version": "0.1.0",
   "description": "High-performance PDF to image conversion for Node.js and Bun.",
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/omsimos/pdf-raster.git"
+    "url": "git+https://github.com/joshxfi/pdf-raster.git"
   },
-  "homepage": "https://github.com/omsimos/pdf-raster#readme",
+  "homepage": "https://github.com/joshxfi/pdf-raster#readme",
   "bugs": {
-    "url": "https://github.com/omsimos/pdf-raster/issues"
+    "url": "https://github.com/joshxfi/pdf-raster/issues"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -34,7 +34,7 @@
   },
   "napi": {
     "binaryName": "pdf-raster",
-    "packageName": "@omsimos/pdf-raster",
+    "packageName": "pdf-raster",
     "targets": [
       "x86_64-apple-darwin",
       "aarch64-apple-darwin",
@@ -79,11 +79,11 @@
     "typescript": "5.9.2"
   },
   "optionalDependencies": {
-    "@omsimos/pdf-raster-darwin-x64": "0.1.0",
-    "@omsimos/pdf-raster-darwin-arm64": "0.1.0",
-    "@omsimos/pdf-raster-linux-x64-gnu": "0.1.0",
-    "@omsimos/pdf-raster-linux-arm64-gnu": "0.1.0",
-    "@omsimos/pdf-raster-win32-x64-msvc": "0.1.0",
-    "@omsimos/pdf-raster-win32-arm64-msvc": "0.1.0"
+    "pdf-raster-darwin-x64": "0.1.0",
+    "pdf-raster-darwin-arm64": "0.1.0",
+    "pdf-raster-linux-x64-gnu": "0.1.0",
+    "pdf-raster-linux-arm64-gnu": "0.1.0",
+    "pdf-raster-win32-x64-msvc": "0.1.0",
+    "pdf-raster-win32-arm64-msvc": "0.1.0"
   }
 }

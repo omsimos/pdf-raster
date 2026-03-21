@@ -33,10 +33,9 @@ export default function HomePage() {
                   PDF Raster
                 </h1>
                 <p className="max-w-2xl text-base leading-7 text-fd-muted-foreground md:text-lg">
-                  @omsimos/pdf-raster is a native PDF-to-images library for
-                  Node.js and Bun. It turns PDFs into encoded page images
-                  through a small server-side API for backend and document
-                  workflows.
+                  pdf-raster is a native PDF-to-images library for Node.js and
+                  Bun. It turns PDFs into encoded page images through a small
+                  server-side API for backend and document workflows.
                 </p>
               </div>
 
@@ -66,7 +65,7 @@ export default function HomePage() {
                 View benchmark
               </Link>
               <Link
-                href="https://github.com/omsimos/pdf-raster"
+                href="https://github.com/joshxfi/pdf-raster"
                 className="inline-flex items-center rounded-full border border-fd-border bg-transparent px-5 py-2.5 text-sm font-medium text-fd-muted-foreground transition-colors hover:border-fd-foreground hover:text-fd-foreground"
               >
                 GitHub repo
@@ -118,7 +117,7 @@ export default function HomePage() {
                     </div>
                     <div className="mt-3 space-y-2 text-sm text-fd-muted-foreground">
                       <div className="flex items-center justify-between gap-4">
-                        <span>@omsimos/pdf-raster</span>
+                        <span>pdf-raster</span>
                         <span className="font-medium text-fd-foreground">
                           {metric.ours}
                         </span>

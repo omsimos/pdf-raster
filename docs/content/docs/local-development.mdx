@@ -3,7 +3,7 @@ title: Local development
 description: Prepare PDFium, build the native package, and validate the local development setup in this monorepo.
 ---
 
-Use this page if you are working on `@omsimos/pdf-raster` itself inside the
+Use this page if you are working on `pdf-raster` itself inside the
 monorepo. If you only want to install and use the package, start with
 [Installation](/docs/installation).
 
@@ -22,7 +22,7 @@ bun run pdfium:download
     Build the native package:
 
 ```bash
-bun run --filter @omsimos/pdf-raster build
+bun run --filter pdf-raster build
 ```
 
   </Step>
@@ -30,7 +30,7 @@ bun run --filter @omsimos/pdf-raster build
     Run the package tests to validate the local native path:
 
 ```bash
-bun run --filter @omsimos/pdf-raster test
+bun run --filter pdf-raster test
 ```
 
   </Step>
@@ -66,8 +66,8 @@ bun run --filter @omsimos/pdf-raster test
 
 <Files>
   <File name="bun run pdfium:download" />
-  <File name="bun run --filter @omsimos/pdf-raster build" />
-  <File name="bun run --filter @omsimos/pdf-raster test" />
+  <File name="bun run --filter pdf-raster build" />
+  <File name="bun run --filter pdf-raster test" />
 </Files>
 
 ## If the native setup breaks
@@ -80,10 +80,10 @@ bun run --filter @omsimos/pdf-raster test
     Refresh the local PDFium cache with `bun run pdfium:download`.
   </Step>
   <Step>
-    Rebuild the package with `bun run --filter @omsimos/pdf-raster build`.
+    Rebuild the package with `bun run --filter pdf-raster build`.
   </Step>
   <Step>
-    Run `bun run --filter @omsimos/pdf-raster test` to validate the native
+    Run `bun run --filter pdf-raster test` to validate the native
     path.
   </Step>
 </Steps>

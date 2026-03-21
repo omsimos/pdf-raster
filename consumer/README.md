@@ -1,6 +1,6 @@
 # consumer
 
-Minimal Next.js app that validates the published `@omsimos/pdf-raster` npm
+Minimal Next.js app that validates the published `pdf-raster` npm
 package in a real server-route consumer.
 
 This app is a root-level verification app for the published npm package. It is

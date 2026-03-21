@@ -8,7 +8,7 @@ description: Convert PDFs into page images from a file path or an in-memory buff
 ## Convert all pages from a file path
 
 ```ts
-import { convert } from "@omsimos/pdf-raster";
+import { convert } from "pdf-raster";
 
 const pages = await convert("./report.pdf");
 
@@ -62,7 +62,7 @@ return them from an API, or pass them into another service directly.
 Page indices are zero-based:
 
 ```ts
-import { convert } from "@omsimos/pdf-raster";
+import { convert } from "pdf-raster";
 
 const pages = await convert("./report.pdf", {
   pages: [0, 2],
@@ -75,7 +75,7 @@ const pages = await convert("./report.pdf", {
 PNG is the default, but you can request another encoded format when needed:
 
 ```ts
-import { convert } from "@omsimos/pdf-raster";
+import { convert } from "pdf-raster";
 
 const pages = await convert("./report.pdf", {
   outputFormat: "webp",
@@ -95,7 +95,7 @@ console.log(pages[0].mimeType);
   <CodeBlockTab value="path">
 
 ```ts
-import { convert } from "@omsimos/pdf-raster";
+import { convert } from "pdf-raster";
 
 const pages = await convert("./invoice.pdf", {
   dpi: 300,
@@ -107,7 +107,7 @@ const pages = await convert("./invoice.pdf", {
 
 ```ts
 import { readFile } from "node:fs/promises";
-import { convert } from "@omsimos/pdf-raster";
+import { convert } from "pdf-raster";
 
 const bytes = await readFile("./invoice.pdf");
 const pages = await convert(bytes, {

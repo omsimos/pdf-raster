@@ -53,10 +53,10 @@ export default function HomePage() {
               maxWidth: "720px",
             }}
           >
-            This app imports <code>@omsimos/pdf-raster</code> directly from the
-            published npm package inside a Node.js route handler. Its only goal
-            is to confirm the packaged binding loads and converts PDFs correctly
-            in a real Next.js consumer.
+            This app imports <code>pdf-raster</code> directly from the published
+            npm package inside a Node.js route handler. Its only goal is to
+            confirm the packaged binding loads and converts PDFs correctly in a
+            real Next.js consumer.
           </p>
         </header>
 

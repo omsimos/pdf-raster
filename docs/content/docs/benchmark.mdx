@@ -1,6 +1,6 @@
 ---
 title: Benchmark
-description: Understand the current local benchmark setup and sample results for @omsimos/pdf-raster.
+description: Understand the current local benchmark setup and sample results for pdf-raster.
 ---
 
 <Callout type="info" title="Sample local results">
@@ -13,7 +13,7 @@ description: Understand the current local benchmark setup and sample results for
 The benchmark currently compares three implementations on the same input PDFs
 and settings:
 
-- `@omsimos/pdf-raster`
+- `pdf-raster`
 - `pdfjs-dist + @napi-rs/canvas`
 - `pdfjs-dist + node-canvas`
 
@@ -51,24 +51,24 @@ Settings: dpi=300, output=png, pages=all, warmups=1, runs=5
 Input size: 842 B
 Library                       Pages  Avg total  P50 total  Avg/page  Avg bytes
 ----------------------------  -----  ---------  ---------  --------  ---------
-@omsimos/pdf-raster           2      1.72 ms    1.70 ms    0.86 ms   36.2 KB
+pdf-raster                    2      1.72 ms    1.70 ms    0.86 ms   36.2 KB
 pdfjs-dist + @napi-rs/canvas  2      11.96 ms   11.91 ms   5.98 ms   22.6 KB
 pdfjs-dist + node-canvas      2      14.37 ms   14.37 ms   7.19 ms   22.8 KB
 
-Relative speed (@omsimos/pdf-raster vs pdfjs-dist + @napi-rs/canvas): total 6.94x
-Relative speed (@omsimos/pdf-raster vs pdfjs-dist + node-canvas): total 8.35x
+Relative speed (pdf-raster vs pdfjs-dist + @napi-rs/canvas): total 6.94x
+Relative speed (pdf-raster vs pdfjs-dist + node-canvas): total 8.35x
 
 File: single-page.pdf
 Settings: dpi=300, output=png, pages=all, warmups=1, runs=5
 Input size: 583 B
 Library                       Pages  Avg total  P50 total  Avg/page  Avg bytes
 ----------------------------  -----  ---------  ---------  --------  ---------
-@omsimos/pdf-raster           1      1.29 ms    1.00 ms    1.29 ms   13.4 KB
+pdf-raster                    1      1.29 ms    1.00 ms    1.29 ms   13.4 KB
 pdfjs-dist + @napi-rs/canvas  1      5.81 ms    5.83 ms    5.81 ms   7.6 KB
 pdfjs-dist + node-canvas      1      7.25 ms    7.26 ms    7.25 ms   7.8 KB
 
-Relative speed (@omsimos/pdf-raster vs pdfjs-dist + @napi-rs/canvas): total 4.51x
-Relative speed (@omsimos/pdf-raster vs pdfjs-dist + node-canvas): total 5.63x
+Relative speed (pdf-raster vs pdfjs-dist + @napi-rs/canvas): total 4.51x
+Relative speed (pdf-raster vs pdfjs-dist + node-canvas): total 5.63x
 ```
 
 ## How to read the multipliers
@@ -77,7 +77,7 @@ The relative speed line is a multiplier, not a percentage.
 
 - If the benchmark says `6.94x`, it means the comparison backend took `6.94`
   times as long on that metric.
-- In other words, `@omsimos/pdf-raster` was `6.94x` faster on that sample.
+- In other words, `pdf-raster` was `6.94x` faster on that sample.
 
 ## What this benchmark is useful for
 

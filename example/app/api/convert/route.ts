@@ -19,7 +19,7 @@ const runtimeImport = new Function("specifier", "return import(specifier)") as <
   specifier: string,
 ) => Promise<T>;
 
-type PdfToImagesModule = typeof import("@omsimos/pdf-raster");
+type PdfToImagesModule = typeof import("pdf-raster");
 type PdfToImagesErrorCode =
   | "INVALID_INPUT"
   | "INVALID_OPTIONS"
@@ -50,7 +50,7 @@ function isPdfToImagesError(
 }
 
 async function loadPdfToImages(): Promise<PdfToImagesModule> {
-  return runtimeImport<PdfToImagesModule>("@omsimos/pdf-raster");
+  return runtimeImport<PdfToImagesModule>("pdf-raster");
 }
 
 function errorResponse(code: string, message: string, status: number) {
