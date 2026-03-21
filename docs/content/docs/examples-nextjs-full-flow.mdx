@@ -4,7 +4,7 @@ description: Build a simple App Router flow with a client upload form, a Node.js
 ---
 
 <Callout type="warning" title="Keep the native package on the server">
-  Import `@omsimos/pdf-raster` only inside the route handler. The client page
+  Import `pdf-raster` only inside the route handler. The client page
   should only send `FormData` and render the returned image payloads.
 </Callout>
 
@@ -40,7 +40,7 @@ This example shows a complete App Router flow:
 
 ```ts
 import { NextResponse } from "next/server";
-import { convert, PdfToImagesError } from "@omsimos/pdf-raster";
+import { convert, PdfToImagesError } from "pdf-raster";
 
 export const runtime = "nodejs";
 

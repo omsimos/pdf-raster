@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@napi-rs/canvas": "^0.1.80",
-    "@omsimos/pdf-raster": "*",
+    "pdf-raster": "*",
     "canvas": "^3.2.0",
     "pdfjs-dist": "^5.4.149"
   },

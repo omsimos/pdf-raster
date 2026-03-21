@@ -12,6 +12,7 @@ jobs:
   changeset:
     name: Changeset Validation
     runs-on: ubuntu-latest
+    if: vars.REQUIRE_CHANGESETS == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -209,7 +209,7 @@ function requireLocalDarwinArm64() {
 }
 
 function requirePackageDarwinArm64() {
-  return loadRuntimeBinding("@omsimos/pdf-raster-darwin-arm64");
+  return loadRuntimeBinding("pdf-raster-darwin-arm64");
 }
 
 function requireLocalDarwinX64() {
@@ -217,7 +217,7 @@ function requireLocalDarwinX64() {
 }
 
 function requirePackageDarwinX64() {
-  return loadRuntimeBinding("@omsimos/pdf-raster-darwin-x64");
+  return loadRuntimeBinding("pdf-raster-darwin-x64");
 }
 
 function requireLocalLinuxArm64() {
@@ -225,7 +225,7 @@ function requireLocalLinuxArm64() {
 }
 
 function requirePackageLinuxArm64() {
-  return loadRuntimeBinding("@omsimos/pdf-raster-linux-arm64-gnu");
+  return loadRuntimeBinding("pdf-raster-linux-arm64-gnu");
 }
 
 function requireLocalLinuxX64() {
@@ -233,7 +233,7 @@ function requireLocalLinuxX64() {
 }
 
 function requirePackageLinuxX64() {
-  return loadRuntimeBinding("@omsimos/pdf-raster-linux-x64-gnu");
+  return loadRuntimeBinding("pdf-raster-linux-x64-gnu");
 }
 
 function requireLocalWin32Arm64() {
@@ -241,7 +241,7 @@ function requireLocalWin32Arm64() {
 }
 
 function requirePackageWin32Arm64() {
-  return loadRuntimeBinding("@omsimos/pdf-raster-win32-arm64-msvc");
+  return loadRuntimeBinding("pdf-raster-win32-arm64-msvc");
 }
 
 function requireLocalWin32X64() {
@@ -249,7 +249,7 @@ function requireLocalWin32X64() {
 }
 
 function requirePackageWin32X64() {
-  return loadRuntimeBinding("@omsimos/pdf-raster-win32-x64-msvc");
+  return loadRuntimeBinding("pdf-raster-win32-x64-msvc");
 }
 
 function loadTargetBinding(): LoadedBinding | null {
@@ -298,7 +298,7 @@ function loadNativeBinding(): LoadedBinding {
   if (process.platform === "linux") {
     if (isMusl()) {
       throw new Error(
-        "Failed to load the native @omsimos/pdf-raster binding for linux musl. Prebuilt musl artifacts are not published for this package.",
+        "Failed to load the native pdf-raster binding for linux musl. Prebuilt musl artifacts are not published for this package.",
       );
     }
   }
@@ -317,7 +317,7 @@ function failToLoad(): never {
     .map((error) => (error instanceof Error ? error.message : String(error)))
     .join("\n");
   throw new Error(
-    `Failed to load the native @omsimos/pdf-raster binding for ${process.platform}/${process.arch}.${details ? `\n${details}` : ""}`,
+    `Failed to load the native pdf-raster binding for ${process.platform}/${process.arch}.${details ? `\n${details}` : ""}`,
   );
 }
 

@@ -5,7 +5,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "pdf-raster npm consumer",
   description:
-    "Minimal Next.js app that validates the published @omsimos/pdf-raster package.",
+    "Minimal Next.js app that validates the published pdf-raster package.",
 };
 
 export default function RootLayout({

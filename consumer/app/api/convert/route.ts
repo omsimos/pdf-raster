@@ -1,9 +1,9 @@
+import { NextResponse } from "next/server";
 import {
   convert,
   PdfToImagesError,
   type PdfToImagesErrorCode,
-} from "@omsimos/pdf-raster";
-import { NextResponse } from "next/server";
+} from "pdf-raster";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
