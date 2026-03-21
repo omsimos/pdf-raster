@@ -17,7 +17,6 @@
     "pdfium:download": "bun run --filter pdf-raster pdfium:download",
     "release:check-changeset": "bun ./scripts/check-changeset.ts",
     "release:publish": "NPM_PUBLISH_PROVENANCE=true bun ./scripts/publish-packages.ts",
-    "release:publish:manual": "bun ./scripts/publish-packages.ts",
     "version-packages": "changeset version",
     "test": "turbo run test"
   },
